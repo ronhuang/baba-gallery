@@ -4,4 +4,6 @@
 # ===========================================================================
 
 # Add initial buildfile information here
-config :all, :required => :sproutcore
+config :all,
+  :required => :sproutcore,
+  :url_prefix => 'baba-gallery'
