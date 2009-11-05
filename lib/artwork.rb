@@ -10,11 +10,11 @@ class Artwork
   property :vote_count, Integer, :default => 0
 
   def url
-    "/artwork/#{self.id}"
+    "/baba-gallery/artwork/#{self.id}"
   end
 
   def image_url
-    "/a/#{self.id}.png"
+    "/baba-gallery/a/#{self.id}.png"
   end
 
   def to_json(*a)
