@@ -2,14 +2,19 @@ class Artwork
   include DataMapper::Resource
 
   property :id, Serial
-  property :name, String
-  property :email, String, :format => :email_address
+  property :name, String, :nullable => true
+  property :email, String, :nullable => true, :format => :email_address
   property :created_at, DateTime
-  property :view_count, Integer
-  property :vote_count, Integer
+  property :updated_at, DateTime
+  property :view_count, Integer, :default => 0
+  property :vote_count, Integer, :default => 0
 
   def url
     "/artwork/#{self.id}"
+  end
+
+  def image_url
+    "/a/#{self.id}.png"
   end
 
   def to_json(*a)
@@ -18,20 +23,17 @@ class Artwork
       'name' => self.name,
       'email' => self.email,
       'created_at' => self.created_at,
+      'updated_at' => self.updated_at,
       'view_count' => self.view_count,
-      'vote_count' => self.vote_count
+      'vote_count' => self.vote_count,
+      'image_url' => self.image_url
     }.to_json(*a)
   end
 
-  def self.parse_json(body)
+  def parse_json(body)
     json = JSON.parse(body)
 
     {
-      :guid => json['guid'],
-      :name => json['name'],
-      :email => json['email'],
-      :created_at => json['created_at'],
-      :view_count => json['view_count'],
       :vote_count => json['vote_count']
     }
   end
