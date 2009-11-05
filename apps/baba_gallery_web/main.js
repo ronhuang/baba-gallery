@@ -21,9 +21,6 @@ BabaGalleryWeb.main = function main() {
 
   // Step 2. Set the content property on your primary controller.
   // This will make your app come alive!
-
-  // TODO: Set the content property on your primary controller
-  // ex: BabaGalleryWeb.contactsController.set('content',BabaGalleryWeb.contacts);
   var artworks = BabaGalleryWeb.store.find(BabaGalleryWeb.Artwork);
   BabaGalleryWeb.artworksController.set('content', artworks);
 
