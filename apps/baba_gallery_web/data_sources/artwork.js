@@ -24,7 +24,6 @@ BabaGalleryWeb.ArtworkDataSource = SC.DataSource.extend(
   //
 
   fetch: function(store, query) {
-
     if (query === BabaGalleryWeb.ARTWORKS_QUERY) {
       SC.Request.getUrl('/baba-gallery/artworks').json()
         .notify(this, 'didFetchArtworks', store, query)
@@ -39,7 +38,6 @@ BabaGalleryWeb.ArtworkDataSource = SC.DataSource.extend(
     if (SC.ok(response)) {
       store.loadRecords(BabaGalleryWeb.Artwork, response.get('body').content);
       store.dataSourceDidFetchQuery(query);
-
     } else store.dataSourceDidErrorQuery(query, response);
   },
 
@@ -48,35 +46,59 @@ BabaGalleryWeb.ArtworkDataSource = SC.DataSource.extend(
   //
 
   retrieveRecord: function(store, storeKey) {
-
-    // TODO: Add handlers to retrieve an individual record's contents
-    // call store.dataSourceDidComplete(storeKey) when done.
+    if (SC.kindOf(store.recordTypeFor(storeKey), BabaGalleryWeb.Artwork)) {
+      SC.Request.getUrl(store.idFor(storeKey)).json()
+        .notify(this, 'didRetrieveArtwork', store, storeKey)
+        .send();
+      return YES;
+    } else return NO;
 
     return NO ; // return YES if you handled the storeKey
   },
 
+  didRetrieveArtwork: function(response, store, storeKey) {
+    if (SC.ok(response)) {
+      var dataHash = response.get('body').content;
+      store.dataSourceDidComplete(storeKey, dataHash);
+    } else store.dataSourceDidError(storeKey, response);
+  },
+
   createRecord: function(store, storeKey) {
-
-    // TODO: Add handlers to submit new records to the data source.
-    // call store.dataSourceDidComplete(storeKey) when done.
-
+    // Don't support creating new artwork through web interface yet.
     return NO ; // return YES if you handled the storeKey
   },
 
   updateRecord: function(store, storeKey) {
+    // Only support updating vote count.
+    if (SC.kindOf(store.recordTypeFor(storeKey), BabaGalleryWeb.Artwork)) {
+      SC.Request.putUrl(store.idFor(storeKey)).json()
+        .notify(this, this.didUpdateArtwork, store, storeKey)
+        .send(store.readDataHash(storeKey));
+      return YES;
+    } else return NO ;
+  },
 
-    // TODO: Add handlers to submit modified record to the data source
-    // call store.dataSourceDidComplete(storeKey) when done.
-
-    return NO ; // return YES if you handled the storeKey
+  didUpdateArtwork: function(response, store, storeKey) {
+    if (SC.ok(response)) {
+      var data = response.get('body');
+      if (data) data = data.content; // if hash is returned; use it.
+      store.dataSourceDidComplete(storeKey, data) ;
+    } else store.dataSourceDidError(storeKey);
   },
 
   destroyRecord: function(store, storeKey) {
+    if (SC.kindOf(store.recordTypeFor(storeKey), BabaGalleryWeb.Artwork)) {
+      SC.Request.deleteUrl(store.idFor(storeKey)).json()
+        .notify(this, this.didDestroyArtwork, store, storeKey)
+        .send();
+      return YES;
+    } else return NO;
+  },
 
-    // TODO: Add handlers to destroy records on the data source.
-    // call store.dataSourceDidDestroy(storeKey) when done
-
-    return NO ; // return YES if you handled the storeKey
+  didDestroyArtwork: function(response, store, storeKey) {
+    if (SC.ok(response)) {
+      store.dataSourceDidDestroy(storeKey);
+    } else store.dataSourceDidError(response);
   }
 
 }) ;
