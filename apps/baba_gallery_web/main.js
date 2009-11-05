@@ -21,7 +21,7 @@ BabaGalleryWeb.main = function main() {
 
   // Step 2. Set the content property on your primary controller.
   // This will make your app come alive!
-  var artworks = BabaGalleryWeb.store.find(BabaGalleryWeb.Artwork);
+  var artworks = BabaGalleryWeb.store.find(BabaGalleryWeb.ARTWORKS_QUERY);
   BabaGalleryWeb.artworksController.set('content', artworks);
 
 } ;
