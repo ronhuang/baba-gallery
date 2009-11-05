@@ -37,6 +37,10 @@ BabaGalleryWeb.mainPage = SC.Page.design({
       backgroundColor: 'white',
 
       contentView: SC.ListView.design({
+        contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
+        selectionBinding: 'BabaGalleryWeb.artworksController.selection',
+        contentValueKey: "name",
+        rowHeight: 100
       })
     }),
 
@@ -49,7 +53,7 @@ BabaGalleryWeb.mainPage = SC.Page.design({
         layout: { centerY: 0, height: 18, left: 20, right: 20 },
         textAlign: SC.ALIGN_CENTER,
 
-        value: "Item Count"
+        valueBinding: "BabaGalleryWeb.artworksController.summary"
       })
     })
   })
