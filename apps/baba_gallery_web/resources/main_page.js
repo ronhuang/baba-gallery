@@ -74,9 +74,8 @@ BabaGalleryWeb.mainPage = SC.Page.design({
     contentView: SC.GridView.design({
       contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
       selectionBinding: 'BabaGalleryWeb.artworksController.selection',
-      contentValueKey: "image_url",
-      exampleView: SC.ImageView,
-      rowHeight: 160,
+      exampleView: BabaGalleryWeb.ArtworkGridView,
+      rowHeight: 216,
       columnWidth: 160
     })
   })
