@@ -22,12 +22,15 @@ BabaGalleryWeb.mainPage = SC.Page.design({
         layout: { centerY: 0, height: 24, left: 8, width: 200 },
         controlSize: SC.LARGE_CONTROL_SIZE,
         fontWeight: SC.BOLD_WEIGHT,
-        value:   'Baba Gallery'
+        value: 'Baba Gallery'
       }),
 
       addButton: SC.ButtonView.design({
         layout: { centerY: 0, height: 24, right: 12, width: 100 },
-        title:  "Add Artwork"
+        title: 'About',
+        target: 'BabaGalleryWeb.artworksController',
+        action: 'about',
+        icon: 'sc-icon-help-16',
       })
     }),
 
