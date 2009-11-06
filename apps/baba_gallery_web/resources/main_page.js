@@ -71,11 +71,13 @@ BabaGalleryWeb.mainPage = SC.Page.design({
     hasHorizontalScroller: NO,
     backgroundColor: 'white',
 
-    contentView: SC.ListView.design({
+    contentView: SC.GridView.design({
       contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
       selectionBinding: 'BabaGalleryWeb.artworksController.selection',
-      contentValueKey: "name",
-      rowHeight: 100
+      contentValueKey: "image_url",
+      exampleView: SC.ImageView,
+      rowHeight: 160,
+      columnWidth: 160
     })
   })
 
