@@ -21,6 +21,10 @@ BabaGalleryWeb.Artwork = SC.Record.extend(
   view_count: SC.Record.attr(Number, { defaultValue: 0 }),
   vote_count: SC.Record.attr(Number, { defaultValue: 0 }),
   url: SC.Record.attr(String),
-  image_url: SC.Record.attr(String)
+  image_url: SC.Record.attr(String),
+
+  icon: function() {
+    return "sc-icon-user-16";
+  }.property().cacheable()
 
 }) ;

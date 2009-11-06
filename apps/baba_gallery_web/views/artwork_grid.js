@@ -49,7 +49,10 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
                  bottom: info_height - line_height - margin},
         content: content,
         contentValueKey: 'name',
-        contentUnreadCountKey: 'vote_count'
+        contentUnreadCountKey: 'vote_count',
+        hasContentIcon: YES,
+        contentIconKey: 'icon',
+        outlineIndent: 0
       }),
       {rootElementPath: [1] }
     );
