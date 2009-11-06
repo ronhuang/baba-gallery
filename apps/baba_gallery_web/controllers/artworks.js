@@ -23,6 +23,9 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
     this.set('nowShowing', 'fullscreenView');
   },
 
+  vote: function() {
+  },
+
   summary: function() {
     var len = this.get('length'), ret ;
 

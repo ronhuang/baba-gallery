@@ -44,34 +44,26 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
     childViews.push(view);
 
     view = this.createChildView(
-      SC.LabelView.design({
-        layout: {left: margin, width: (frame.width - margin) / 2,
-                 height: line_height, bottom: info_height - line_height - margin},
-        textAlign: SC.ALIGN_LEFT,
-        value: 'Author: %@'.fmt(name)
+      SC.ListItemView.design({
+        layout: {left: margin, right: margin, height: line_height,
+                 bottom: info_height - line_height - margin},
+        content: content,
+        contentValueKey: 'name',
+        contentUnreadCountKey: 'vote_count'
       }),
-      { rootElementPath: [1] }
-    );
-    childViews.push(view);
-
-    view = this.createChildView(
-      SC.LabelView.design({
-        layout: {right: margin, width: (frame.width - margin) / 2,
-                 height: line_height, bottom: info_height - line_height - margin},
-        textAlign: SC.ALIGN_RIGHT,
-        value: 'Votes: %@'.fmt(vote_count)
-      }),
-      { rootElementPath: [2] }
+      {rootElementPath: [1] }
     );
     childViews.push(view);
 
     view = this.createChildView(
       SC.ButtonView.design({
-        //layout: {left: margin, height: 24 - margin, centerY: (24 - margin) / 2, right: margin, bottom: 0},
+        theme: 'capsule',
         layout: {left: margin, right: margin, bottom: margin, height: line_height},
-        title: 'Vote'
+        title: 'Vote',
+        target: "BabaGalleryWeb.artworksController",
+        action: "vote"
       }),
-      { rootElementPath: [3] }
+      { rootElementPath: [2] }
     );
     childViews.push(view);
 
