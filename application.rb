@@ -57,10 +57,7 @@ put "/artwork/:id" do
   artwork = Artwork.get(params[:id]) rescue nil
   halt(404, 'Not Found') if artwork.nil?
 
-  opts = Artwork.parse_json(request.body.read) rescue nil
-  halt(401, 'Invalid Format') if opts.nil?
-
-  artwork.vote_count = opts[:vote_count]
+  artwork.vote_count += 1
   artwork.save
 
   response['Content-Type'] = 'application/json'
