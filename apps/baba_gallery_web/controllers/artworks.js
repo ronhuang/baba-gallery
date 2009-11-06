@@ -27,8 +27,8 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
     var len = this.get('length'), ret ;
 
     if (len && len > 0) {
-      ret = len === 1 ? "1 task" : "%@ tasks".fmt(len);
-    } else ret = "No tasks";
+      ret = len === 1 ? "1 artwork" : "%@ artworks".fmt(len);
+    } else ret = "No artworks";
 
     return ret;
   }.property('length').cacheable()
