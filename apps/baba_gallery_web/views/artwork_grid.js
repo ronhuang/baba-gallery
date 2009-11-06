@@ -24,20 +24,15 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
     var image_size = Math.min(frame.width, frame.height - info_height) - margin * 2;
 
     // content display properties.
-    var name, vote_count, image_url;
     var content = this.get('content');
-    if (content) {
-      name = content.get('name');
-      vote_count = content.get('vote_count');
-      image_url = content.get('image_url');
-    }
 
     view = this.createChildView(
       SC.ImageView.design({
         layout: {centerX: 0, centerY: -(info_height / 2),
                  width: image_size, height: image_size},
         useImageCache: NO,
-        value: image_url
+        content: content,
+        contentValueKey: 'image_url'
       }),
       { rootElementPath: [0] }
     );
