@@ -13,6 +13,16 @@
 BabaGalleryWeb.artworksController = SC.ArrayController.create(
 /** @scope BabaGalleryWeb.artworksController.prototype */ {
 
+  nowShowing: 'thumbnailView',
+
+  showThumbnailView: function() {
+    this.set('nowShowing', 'thumbnailView');
+  },
+
+  showFullscreenView: function() {
+    this.set('nowShowing', 'fullscreenView');
+  },
+
   summary: function() {
     var len = this.get('length'), ret ;
 

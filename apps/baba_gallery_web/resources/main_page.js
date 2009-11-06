@@ -31,16 +31,25 @@ BabaGalleryWeb.mainPage = SC.Page.design({
       })
     }),
 
-    middleView: SC.ScrollView.design({
-      hasHorizontalScroller: NO,
+    middleView: SC.SplitView.design({
       layout: { top: 36, bottom: 32, left: 0, right: 0 },
-      backgroundColor: 'white',
+      layoutDirection: SC.LAYOUT_HORIZONTAL,
+      defaultThickness: 200,
+      topLeftMinThickness: 100,
 
-      contentView: SC.ListView.design({
-        contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
-        selectionBinding: 'BabaGalleryWeb.artworksController.selection',
-        contentValueKey: "name",
-        rowHeight: 100
+      //topLeftView: SC.ListView.design({
+      //}),
+      topLeftView: SC.View.design({
+        childViews: 'dummyView'.w(),
+
+        dummyView: SC.ButtonView.design({
+          layout: {centerX: 0, top: 12, height: 24, width:80},
+          title: "All",
+        })
+      }),
+
+      bottomRightView: SC.ContainerView.design({
+        nowShowingBinding: 'BabaGalleryWeb.artworksController.nowShowing',
       })
     }),
 
@@ -55,6 +64,18 @@ BabaGalleryWeb.mainPage = SC.Page.design({
 
         valueBinding: "BabaGalleryWeb.artworksController.summary"
       })
+    })
+  }),
+
+  thumbnailView: SC.ScrollView.design({
+    hasHorizontalScroller: NO,
+    backgroundColor: 'white',
+
+    contentView: SC.ListView.design({
+      contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
+      selectionBinding: 'BabaGalleryWeb.artworksController.selection',
+      contentValueKey: "name",
+      rowHeight: 100
     })
   })
 
