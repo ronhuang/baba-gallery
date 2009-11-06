@@ -20,11 +20,14 @@ BabaGalleryWeb.Artwork = SC.Record.extend(
   updated_at: SC.Record.attr(Date),
   view_count: SC.Record.attr(Number, { defaultValue: 0 }),
   vote_count: SC.Record.attr(Number, { defaultValue: 0 }),
-  url: SC.Record.attr(String),
   image_url: SC.Record.attr(String),
 
   icon: function() {
     return "sc-icon-user-16";
-  }.property().cacheable()
+  }.property().cacheable(),
+
+  url: function() {
+    return this.get('guid');
+  }.property('guid').cacheable()
 
 }) ;

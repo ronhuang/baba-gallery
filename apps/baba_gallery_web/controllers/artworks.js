@@ -23,7 +23,17 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
     this.set('nowShowing', 'fullscreenView');
   },
 
-  vote: function() {
+  vote: function(src) {
+    var artwork = src.get('artwork');
+    var url = artwork.get('url');
+
+    SC.Request.putUrl(url).json()
+      .notify(this, this.didVoteArtwork, artwork)
+      .send();
+  },
+
+  didVoteArtwork: function(response, artwork) {
+    artwork.refresh();
   },
 
   summary: function() {

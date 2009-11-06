@@ -59,7 +59,8 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
         layout: {left: margin, right: margin, bottom: margin, height: line_height},
         title: 'Vote',
         target: "BabaGalleryWeb.artworksController",
-        action: "vote"
+        action: "vote",
+        artwork: content
       }),
       { rootElementPath: [2] }
     );
