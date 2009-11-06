@@ -15,6 +15,9 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
 
   nowShowing: 'thumbnailView',
   aboutPane: null,
+  thickness: null,
+  thumbnailWidth: 160,
+  thumbnailHeight: 160 + 56,
 
   showThumbnailView: function() {
     this.set('nowShowing', 'thumbnailView');
@@ -66,6 +69,9 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
     pane.append();
     this.set('aboutPane', pane);
   },
+
+  thumbnailObserver: function() {
+  }.observes('thickness', 'thumbnailWidth', 'thumbnailHeight'),
 
   summary: function() {
     var len = this.get('length'), ret ;

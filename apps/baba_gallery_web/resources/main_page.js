@@ -39,6 +39,7 @@ BabaGalleryWeb.mainPage = SC.Page.design({
       layoutDirection: SC.LAYOUT_HORIZONTAL,
       defaultThickness: 200,
       topLeftMinThickness: 100,
+      bottomRightThicknessBinding: 'BabaGalleryWeb.artworksController.thickness',
 
       //topLeftView: SC.ListView.design({
       //}),
@@ -78,8 +79,8 @@ BabaGalleryWeb.mainPage = SC.Page.design({
       contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
       selectionBinding: 'BabaGalleryWeb.artworksController.selection',
       exampleView: BabaGalleryWeb.ArtworkGridView,
-      rowHeight: 216,
-      columnWidth: 160
+      rowHeightBinding: 'BabaGalleryWeb.artworksController.thumbnailHeight',
+      columnWidthBinding: 'BabaGalleryWeb.artworksController.thumbnailWidth'
     })
   })
 
