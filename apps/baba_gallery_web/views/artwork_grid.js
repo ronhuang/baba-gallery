@@ -58,6 +58,7 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
         theme: 'capsule',
         layout: {left: margin, right: margin, bottom: margin, height: line_height},
         title: 'Vote',
+        icon: 'sc-icon-favorite-16',
         target: "BabaGalleryWeb.artworksController",
         action: "vote",
         artwork: content
