@@ -32,7 +32,15 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
                  width: image_size, height: image_size},
         useImageCache: NO,
         content: content,
-        contentValueKey: 'image_url'
+        contentValueKey: 'image_url',
+
+        mouseDown: function(evt) {
+          var name = content.get('name');
+          var image_url = content.get('image_url');
+          BabaGalleryWeb.artworksController.set('currentImageName', name);
+          BabaGalleryWeb.artworksController.set('currentImageUrl', image_url);
+          BabaGalleryWeb.artworksController.showImageView();
+        }
       }),
       { rootElementPath: [0] }
     );

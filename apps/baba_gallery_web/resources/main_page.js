@@ -84,6 +84,19 @@ BabaGalleryWeb.mainPage = SC.Page.design({
       rowHeightBinding: 'BabaGalleryWeb.artworksController.thumbnailHeight',
       columnWidthBinding: 'BabaGalleryWeb.artworksController.thumbnailWidth'
     })
+  }),
+
+  imageView: SC.ScrollView.design({
+    backgroundColor: 'white',
+
+    contentView: SC.ImageView.design({
+      layout: {left: 0, top: 0, width: 1024, height: 1024},
+      valueBinding: 'BabaGalleryWeb.artworksController.currentImageUrl',
+      toolTipBinding: 'BabaGalleryWeb.artworksController.currentImageName',
+      mouseDown: function(evt) {
+        BabaGalleryWeb.artworksController.showThumbnailView();
+      }
+    })
   })
 
 });

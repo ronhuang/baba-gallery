@@ -18,13 +18,15 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
   thickness: null,
   thumbnailWidth: 160,
   thumbnailHeight: 160 + 56,
+  currentImageUrl: null,
+  currentImageName: null,
 
   showThumbnailView: function() {
     this.set('nowShowing', 'thumbnailView');
   },
 
-  showFullscreenView: function() {
-    this.set('nowShowing', 'fullscreenView');
+  showImageView: function() {
+    this.set('nowShowing', 'imageView');
   },
 
   vote: function(view) {
