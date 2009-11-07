@@ -37,6 +37,7 @@ BabaGalleryWeb.mainPage = SC.Page.design({
     middleView: SC.SplitView.design({
       layout: { top: 36, bottom: 32, left: 0, right: 0 },
       layoutDirection: SC.LAYOUT_HORIZONTAL,
+      dividerThickness: 1,
       defaultThickness: 100,
       topLeftMinThickness: 100,
       topLeftMaxThickness: 100,
