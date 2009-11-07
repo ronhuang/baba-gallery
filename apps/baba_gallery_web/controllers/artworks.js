@@ -61,6 +61,7 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
         buttonView: SC.ButtonView.extend({
           layout: { width: 80, bottom: 20, height: 24, centerX: 0 },
           title: "Close",
+          isDefault: YES,
           action: "remove",
           target: "BabaGalleryWeb.artworksController.aboutPane"
         })
