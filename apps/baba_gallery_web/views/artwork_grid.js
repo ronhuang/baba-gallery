@@ -19,7 +19,7 @@ BabaGalleryWeb.ArtworkGridView = SC.View.extend(
     var childViews = [], view;
     var frame = this.get('frame');
     var margin = 2;
-    var line_height = 24
+    var line_height = 24;
     var info_height = line_height * 2 + margin * 3;
     var image_size = Math.min(frame.width, frame.height - info_height) - margin * 2;
 
