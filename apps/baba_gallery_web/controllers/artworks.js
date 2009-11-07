@@ -20,6 +20,7 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
   thumbnailHeight: 160 + 56,
   currentImageUrl: null,
   currentImageName: null,
+  sortBy: 'date',
 
   showThumbnailView: function() {
     this.set('nowShowing', 'thumbnailView');
@@ -75,6 +76,10 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
 
   thumbnailObserver: function() {
   }.observes('thickness', 'thumbnailWidth', 'thumbnailHeight'),
+
+  sortObserver: function() {
+    console.log(this.get('sortBy'));
+  }.observes('sortBy'),
 
   summary: function() {
     var len = this.get('length'), ret ;

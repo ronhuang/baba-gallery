@@ -44,14 +44,25 @@ BabaGalleryWeb.mainPage = SC.Page.design({
       canCollapseViews: NO,
       bottomRightThicknessBinding: 'BabaGalleryWeb.artworksController.thickness',
 
-      //topLeftView: SC.ListView.design({
-      //}),
       topLeftView: SC.View.design({
-        childViews: 'dummyView'.w(),
+        childViews: 'sortLabel sortRadio'.w(),
 
-        dummyView: SC.ButtonView.design({
-          layout: {centerX: 0, top: 12, height: 24, width:80},
-          title: "All",
+        sortLabel: SC.LabelView.design({
+          layout: {left: 2, top: 2, right: 2},
+          fontWeight: SC.BOLD_WEIGHT,
+          value: 'Sort by:'
+        }),
+
+        sortRadio: SC.RadioView.design({
+          layout: {left: 2, top: 26, right: 2},
+          items: [{ title: "Date (descending)",
+                    value: "date" },
+                  { title: "Popularity (descending)",
+                    value: "popularity" }],
+          valueBinding: 'BabaGalleryWeb.artworksController.sortBy',
+          itemTitleKey: 'title',
+          itemValueKey: 'value',
+          layoutDirection: SC.LAYOUT_VERTICAL
         })
       }),
 
