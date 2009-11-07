@@ -16,8 +16,8 @@ BabaGalleryWeb.Artwork = SC.Record.extend(
 
   name: SC.Record.attr(String),
   email: SC.Record.attr(String),
-  created_at: SC.Record.attr(Date),
-  updated_at: SC.Record.attr(Date),
+  created_at: SC.Record.attr(SC.DateTime),
+  updated_at: SC.Record.attr(SC.DateTime),
   view_count: SC.Record.attr(Number, { defaultValue: 0 }),
   vote_count: SC.Record.attr(Number, { defaultValue: 0 }),
   image_url: SC.Record.attr(String),

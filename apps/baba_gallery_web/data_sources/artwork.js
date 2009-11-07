@@ -5,8 +5,11 @@
 /*globals BabaGalleryWeb */
 
 sc_require('models/artwork');
-BabaGalleryWeb.ARTWORKS_QUERY = SC.Query.local(BabaGalleryWeb.Artwork, {
-  orderBy: 'created_at'
+BabaGalleryWeb.ARTWORKS_DATE_QUERY = SC.Query.local(BabaGalleryWeb.Artwork, {
+  orderBy: 'created_at DESC, vote_count DESC'
+});
+BabaGalleryWeb.ARTWORKS_VOTE_QUERY = SC.Query.local(BabaGalleryWeb.Artwork, {
+  orderBy: 'vote_count DESC, created_at DESC'
 });
 
 /** @class
@@ -24,7 +27,8 @@ BabaGalleryWeb.ArtworkDataSource = SC.DataSource.extend(
   //
 
   fetch: function(store, query) {
-    if (query === BabaGalleryWeb.ARTWORKS_QUERY) {
+    if (query === BabaGalleryWeb.ARTWORKS_DATE_QUERY ||
+        query === BabaGalleryWeb.ARTWORKS_VOTE_QUERY) {
       SC.Request.getUrl('/baba-gallery/artworks').json()
         .notify(this, 'didFetchArtworks', store, query)
         .send();

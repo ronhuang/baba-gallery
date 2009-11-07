@@ -78,7 +78,19 @@ BabaGalleryWeb.artworksController = SC.ArrayController.create(
   }.observes('thickness', 'thumbnailWidth', 'thumbnailHeight'),
 
   sortObserver: function() {
-    console.log(this.get('sortBy'));
+    var sortBy = this.get('sortBy');
+    var query = BabaGalleryWeb.ARTWORKS_DATE_QUERY;
+
+    if ('date' == sortBy) {
+      query = BabaGalleryWeb.ARTWORKS_DATE_QUERY;
+    } else if ('popularity' == sortBy) {
+      query = BabaGalleryWeb.ARTWORKS_VOTE_QUERY;
+    }
+
+    if (query) {
+      var artworks = BabaGalleryWeb.store.find(query);
+      BabaGalleryWeb.artworksController.set('content', artworks);
+    }
   }.observes('sortBy'),
 
   summary: function() {
