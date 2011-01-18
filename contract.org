@@ -1,0 +1,54 @@
+* Routes
+
+- GET /artworks
+Return list of all installed artworks.
+Just get all artworks and return as JSON.
+# Output: { 'content' => Array(Artwork.all) }.to_json
+
+- POST /artworks
+Create a new artwork. Request body to contain json
+# Input: name, email, artwork
+# Output: artwork.url (status 201)
+
+- GET /artwork/:id
+Get an individual artwork
+# Input: id
+# Output: { 'content' => artwork }.to_json
+
+- PUT /artwork/:id
+Vote an individual artwork
+# Input: id
+# Output: { 'content' => artwork }.to_json
+
+- DELETE /artwork/:id
+Delete an invidual artwork
+# Input: id
+
+
+* Models
+
+** Artwork
+*** Property
+- id, Serial
+- name, String, :nullable => true
+- email, String, :nullable => true, :format => :email_address
+- created_at, DateTime
+- updated_at, DateTime
+- view_count, Integer, :default => 0
+- vote_count, Integer, :default => 0
+
+- url, "/baba-gallery/artwork/#{self.id}"
+- image_url, "/baba-gallery/a/#{self.id}.png"
+
+*** Method
+- to_json()
+# 'guid' => self.url,
+# 'name' => self.name,
+# 'email' => self.email,
+# 'created_at' => self.created_at,
+# 'updated_at' => self.updated_at,
+# 'view_count' => self.view_count,
+# 'vote_count' => self.vote_count,
+# 'image_url' => self.image_url
+
+- parse_json()
