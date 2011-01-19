@@ -4,22 +4,35 @@ runtime: python
 api_version: 1
 
 handlers:
-- url: /
-  script: main.py
-
-- url: /test
-  script: main.py
-
-- url: /favicon.ico
-  static_files: favicon.ico
-  upload: favicon.ico
-
-- url: /robots.txt
-  static_files: robots.txt
-  upload: robots.txt
-
+# Script
 - url: /artworks
   script: backend.py
 
 - url: /artwork/.*
   script: backend.py
+
+# Static
+- url: /css
+  static_dir: css
+
+- url: /js
+  static_dir: js
+
+- url: /img
+  static_dir: img
+
+- url: /favicon.ico
+  static_files: public/favicon.ico
+  upload: public/favicon.ico
+
+- url: /robots.txt
+  static_files: public/robots.txt
+  upload: public/robots.txt
+
+- url: /
+  static_files: public/index.html
+  upload: public/index.html
+
+- url: /(.*)
+  static_files: public/\1.html
+  upload: public/(.*)\.html
