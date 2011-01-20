@@ -73,10 +73,11 @@ class ArtworksAction(webapp.RequestHandler):
         artwork.put()
 
         jj = json.dumps({
-            'status': 200,
+            'status': 201,
             'count': 1,
             'content': [artwork.to_dict()],
             })
+        self.response.set_status(201)
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(jj)
 
