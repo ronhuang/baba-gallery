@@ -12,14 +12,8 @@ handlers:
   script: backend.py
 
 # Static
-- url: /css
-  static_dir: css
-
-- url: /js
-  static_dir: js
-
-- url: /img
-  static_dir: img
+- url: /baba-gallery
+  static_dir: web/tmp/build/baba-gallery
 
 - url: /favicon.ico
   static_files: public/favicon.ico
@@ -30,8 +24,8 @@ handlers:
   upload: public/robots.txt
 
 - url: /
-  static_files: public/index.html
-  upload: public/index.html
+  static_files: web/tmp/build/baba-gallery/baba_gallery_web/en/39a632814bf6ac334d80ad5209a746b4d1a24253/index.html
+  upload: web/tmp/build/baba-gallery/baba_gallery_web/en/39a632814bf6ac334d80ad5209a746b4d1a24253/index.html
 
 - url: /(.*)
   static_files: public/\1.html
