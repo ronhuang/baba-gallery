@@ -1,0 +1,114 @@
+// ==========================================================================
+// Project:   BabaGalleryWeb - mainPage
+// Copyright: ©2009 My Company, Inc.
+// ==========================================================================
+/*globals BabaGalleryWeb */
+
+// This page describes the main user interface for your application.
+BabaGalleryWeb.mainPage = SC.Page.design({
+
+  // The main pane is made visible on screen as soon as your app is loaded.
+  // Add childViews to this pane for views to display immediately on page
+  // load.
+  mainPane: SC.MainPane.design({
+    childViews: 'middleView topView bottomView'.w(),
+
+    topView: SC.ToolbarView.design({
+      layout: { top: 0, left: 0, right: 0, height: 36 },
+      childViews: 'labelView addButton'.w(),
+      anchorLocation: SC.ANCHOR_TOP,
+
+      labelView: SC.LabelView.design({
+        layout: { centerY: 0, height: 24, left: 8, width: 200 },
+        controlSize: SC.LARGE_CONTROL_SIZE,
+        fontWeight: SC.BOLD_WEIGHT,
+        value: 'Baba Gallery Web'
+      }),
+
+      addButton: SC.ButtonView.design({
+        layout: { centerY: 0, height: 24, right: 12, width: 100 },
+        title: 'About',
+        target: 'BabaGalleryWeb.artworksController',
+        action: 'about',
+        icon: 'sc-icon-help-16',
+      })
+    }),
+
+    middleView: SC.SplitView.design({
+      layout: { top: 36, bottom: 32, left: 0, right: 0 },
+      layoutDirection: SC.LAYOUT_HORIZONTAL,
+      dividerThickness: 1,
+      defaultThickness: 100,
+      topLeftMinThickness: 100,
+      topLeftMaxThickness: 100,
+      canCollapseViews: NO,
+      bottomRightThicknessBinding: 'BabaGalleryWeb.artworksController.thickness',
+
+      topLeftView: SC.View.design({
+        childViews: 'sortLabel sortRadio'.w(),
+
+        sortLabel: SC.LabelView.design({
+          layout: {left: 2, top: 2, right: 2},
+          fontWeight: SC.BOLD_WEIGHT,
+          value: 'Sort by:'
+        }),
+
+        sortRadio: SC.RadioView.design({
+          layout: {left: 2, top: 26, right: 2},
+          items: [{ title: "Date (descending)",
+                    value: "date" },
+                  { title: "Popularity (descending)",
+                    value: "popularity" }],
+          valueBinding: 'BabaGalleryWeb.artworksController.sortBy',
+          itemTitleKey: 'title',
+          itemValueKey: 'value',
+          layoutDirection: SC.LAYOUT_VERTICAL
+        })
+      }),
+
+      bottomRightView: SC.ContainerView.design({
+        nowShowingBinding: 'BabaGalleryWeb.artworksController.nowShowing',
+      })
+    }),
+
+    bottomView: SC.ToolbarView.design({
+      layout: { bottom: 0, left: 0, right: 0, height: 32 },
+      childViews: 'summaryView'.w(),
+      anchorLocation: SC.ANCHOR_BOTTOM,
+
+      summaryView: SC.LabelView.design({
+        layout: { centerY: 0, height: 18, left: 20, right: 20 },
+        textAlign: SC.ALIGN_CENTER,
+
+        valueBinding: "BabaGalleryWeb.artworksController.summary"
+      })
+    })
+  }),
+
+  thumbnailView: SC.ScrollView.design({
+    hasHorizontalScroller: NO,
+    backgroundColor: 'white',
+
+    contentView: SC.GridView.design({
+      contentBinding: 'BabaGalleryWeb.artworksController.arrangedObjects',
+      selectionBinding: 'BabaGalleryWeb.artworksController.selection',
+      exampleView: BabaGalleryWeb.ArtworkGridView,
+      rowHeightBinding: 'BabaGalleryWeb.artworksController.thumbnailHeight',
+      columnWidthBinding: 'BabaGalleryWeb.artworksController.thumbnailWidth'
+    })
+  }),
+
+  imageView: SC.ScrollView.design({
+    backgroundColor: 'white',
+
+    contentView: SC.ImageView.design({
+      layout: {left: 0, top: 0, width: 1024, height: 1024},
+      valueBinding: 'BabaGalleryWeb.artworksController.currentImageUrl',
+      toolTipBinding: 'BabaGalleryWeb.artworksController.currentImageName',
+      mouseDown: function(evt) {
+        BabaGalleryWeb.artworksController.showThumbnailView();
+      }
+    })
+  })
+
+});
