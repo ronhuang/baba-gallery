@@ -4,6 +4,11 @@ from google.appengine.ext import db
 import dbx
 from django.utils import simplejson as json
 import re
+import os
+from google.appengine.api import images
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
+from google.appengine.ext.webapp import template
 
 # Utility
 def increment_counter(key, amount):
@@ -19,7 +24,7 @@ class Artwork(db.Model):
     updated_at = db.DateTimeProperty(auto_now=True)
     view_count = db.IntegerProperty(default=0)
     vote_count = db.IntegerProperty(default=0)
-    image = db.BlobProperty()
+    image = blobstore.BlobReferenceProperty()
 
     @dbx.DerivedProperty
     def url(self):
@@ -29,7 +34,12 @@ class Artwork(db.Model):
     @dbx.DerivedProperty
     def image_url(self):
         if self.is_saved():
-            return "/artwork/%d/image" % (self.key().id_or_name())
+            return images.get_serving_url(str(self.image.key()), size=800)
+
+    @dbx.DerivedProperty
+    def thumbnail_url(self):
+        if self.is_saved():
+            return images.get_serving_url(str(self.image.key()), size=200)
 
     def to_dict(self):
         ll = []
@@ -39,7 +49,7 @@ class Artwork(db.Model):
         return dict(ll)
 
 # Action
-class ArtworksAction(webapp.RequestHandler):
+class ArtworksAction(blobstore_handlers.BlobstoreUploadHandler):
     def get(self):
         """
         Return list of all installed artworks.
@@ -61,32 +71,26 @@ class ArtworksAction(webapp.RequestHandler):
         """
 
         # Image must exist.
-        img = self.request.get("img")
-        if img == "":
+        upload_files = self.get_uploads("img")
+        blob_info = upload_files[0]
+        if blob_info is None:
             self.error(400)
             return
 
         artwork = Artwork()
         artwork.name = self.request.get("name")
         artwork.email = self.request.get("email")
-        artwork.image = db.Blob(img)
+        artwork.image = blob_info
         artwork.put()
 
-        jj = json.dumps({
-            'status': 201,
-            'count': 1,
-            'content': [artwork.to_dict()],
-            })
-        self.response.set_status(201)
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(jj)
+        self.redirect('/artwork/%d' % (artwork.key().id_or_name()))
 
 class ArtworkAction(webapp.RequestHandler):
-    def get(self):
+    def get(self, artwork_id):
         """
         Get an individual artwork.
         """
-        artwork = self.__get_artwork_by_id()
+        artwork = Artwork.get_by_id(long(artwork_id))
         if artwork is None:
             self.error(404)
             return
@@ -99,11 +103,11 @@ class ArtworkAction(webapp.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(jj)
 
-    def put(self):
+    def put(self, artwork_id):
         """
         Vote an individual artwork.
         """
-        artwork = self.__get_artwork_by_id()
+        artwork = Artwork.get_by_id(long(artwork_id))
         if artwork is None:
             self.error(404)
             return
@@ -118,11 +122,11 @@ class ArtworkAction(webapp.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(jj)
 
-    def delete(self):
+    def delete(self, artwork_id):
         """
         Delete an invidual artwork.
         """
-        artwork = self.__get_artwork_by_id()
+        artwork = Artwork.get_by_id(long(artwork_id))
         if artwork is None:
             self.error(404)
             return
@@ -135,47 +139,21 @@ class ArtworkAction(webapp.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(jj)
 
-    def __get_artwork_by_id(self):
-        m = re.match("^/artwork/([0-9]+)$", self.request.path)
-        id = m and m.group(1)
-        if id is None:
-            return
-
-        id = long(id)
-
-        return Artwork.get_by_id(id)
-
-class ViewAction(webapp.RequestHandler):
+class TestAction(webapp.RequestHandler):
     def get(self):
-        """
-        Return the artwork image.
-        """
-        artwork = self.__get_artwork_by_id()
-        if artwork is None or artwork.image is None:
-            self.error(404)
-            return
+        template_values = {
+            'upload_url': blobstore.create_upload_url('/artworks'),
+        }
 
-        filename = "filename=baba-%d.png" % (artwork.key().id_or_name())
-        self.response.headers['Content-Disposition'] = filename
-        self.response.headers['Content-Type'] = "image/png"
-        self.response.out.write(artwork.image)
-
-    def __get_artwork_by_id(self):
-        m = re.match("^/artwork/([0-9]+)/image$", self.request.path)
-        id = m and m.group(1)
-        if id is None:
-            return
-
-        id = long(id)
-
-        return Artwork.get_by_id(id)
+        path = os.path.join(os.path.dirname(__file__), 'template', 'test.html')
+        self.response.out.write(template.render(path, template_values))
 
 # Boilerplate
 def main():
     actions = [
-        ('/artwork/.*/image', ViewAction),
-        ('/artwork/.*', ArtworkAction),
+        ('/artwork/([0-9]+)$', ArtworkAction),
         ('/artworks', ArtworksAction),
+        ('/test', TestAction),
         ]
     application = webapp.WSGIApplication(actions, debug=True)
     run_wsgi_app(application)
