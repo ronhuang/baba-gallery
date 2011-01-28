@@ -13,8 +13,9 @@ from google.appengine.ext.webapp import template
 # Utility
 def increment_counter(key, amount):
     obj = db.get(key)
-    obj.counter += amount
+    obj.vote_count += amount
     obj.put()
+    return obj
 
 # Model
 class Artwork(db.Model):
