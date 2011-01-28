@@ -113,7 +113,7 @@ class ArtworkAction(webapp.RequestHandler):
             self.error(404)
             return
 
-        db.run_in_transaction(increment_counter, artwork.key(), 1)
+        artwork = db.run_in_transaction(increment_counter, artwork.key(), 1)
 
         jj = json.dumps({
             'status': 200,

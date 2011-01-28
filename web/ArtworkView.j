@@ -17,10 +17,14 @@ var VOTE_HEIGHT = 24.0;
     CPTextField _nameTextView;
     CPTextField _voteTextView;
     CPButton _voteButtonView;
+
+    id _artwork;
 }
 
 - (void)setRepresentedObject:(id)anObject
 {
+    _artwork = anObject;
+
     var bounds = [self bounds];
 
     if (!_bgView)
@@ -37,7 +41,7 @@ var VOTE_HEIGHT = 24.0;
         [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_bgView addSubview:_imageView];
     }
-    [_imageView setImage:[[CPImage alloc] initWithContentsOfFile:anObject["thumbnail_url"]]];
+    [_imageView setImage:[[CPImage alloc] initWithContentsOfFile:_artwork["thumbnail_url"]]];
 
     if (!_nameTextView)
     {
@@ -46,7 +50,7 @@ var VOTE_HEIGHT = 24.0;
         [_nameTextView setFont:[CPFont systemFontOfSize:16.0]];
         [_bgView addSubview:_nameTextView];
     }
-    [_nameTextView setStringValue:[CPString stringWithFormat:@"Artist: %s", anObject["name"]]];
+    [_nameTextView setStringValue:[CPString stringWithFormat:@"Artist: %s", _artwork["name"]]];
     [_nameTextView sizeToFit];
 
     if (!_voteButtonView)
@@ -54,6 +58,8 @@ var VOTE_HEIGHT = 24.0;
         var y = CGRectGetHeight(bounds) - MARGIN_HEIGHT - VOTE_HEIGHT;
         _voteButtonView = [[CPButton alloc] initWithFrame:CGRectMake(MARGIN_WIDTH, y, CGRectGetWidth(bounds), VOTE_HEIGHT)];
         [_voteButtonView setFont:[CPFont systemFontOfSize:16.0]];
+        [_voteButtonView setTarget:self];
+        [_voteButtonView setAction:@selector(vote)];
         [_bgView addSubview:_voteButtonView];
     }
     [_voteButtonView setTitle:@"Vote"];
@@ -67,13 +73,8 @@ var VOTE_HEIGHT = 24.0;
         [_voteTextView setFont:[CPFont systemFontOfSize:16.0]];
         [_bgView addSubview:_voteTextView];
     }
-    var votes = anObject["vote_count"];
-    var voteStr = "";
-    if (votes <= 1)
-        voteStr = [CPString stringWithFormat:@"%d person liked this", votes];
-    else
-        voteStr = [CPString stringWithFormat:@"%d people liked this", votes];
-    [_voteTextView setStringValue:voteStr];
+    var votes = _artwork["vote_count"];
+    [_voteTextView setStringValue:[self _formatVotes:votes]];
 
     if (!_boxView)
     {
@@ -87,6 +88,47 @@ var VOTE_HEIGHT = 24.0;
         [_boxView setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
         [self addSubview:_boxView];
     }
+}
+
+- (void)vote
+{
+    if (!_artwork)
+    {
+        return;
+    }
+
+    [_voteButtonView setEnabled:NO];
+
+    var req = [CPURLRequest requestWithURL:_artwork["url"]];
+    [req setHTTPMethod:@"PUT"];
+    connection = [CPURLConnection connectionWithRequest:req delegate:self];
+}
+
+- (void)connection:(CPURLConnection) connection didReceiveData:(CPString)data
+{
+    var jsObject = [data objectFromJSON];
+    _artwork = jsObject["content"][0];
+
+    var votes = _artwork["vote_count"];
+    [_voteTextView setStringValue:[self _formatVotes:votes]];
+    [_voteButtonView setEnabled:YES];
+}
+
+- (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
+{
+    // TODO: show failed message.
+
+    [_voteButtonView setEnabled:YES];
+}
+
+- (CPString)_formatVotes:(int)votes
+{
+    var voteStr = "";
+    if (votes <= 1)
+        voteStr = [CPString stringWithFormat:@"%d person liked this", votes];
+    else
+        voteStr = [CPString stringWithFormat:@"%d people liked this", votes];
+    return voteStr;
 }
 
 @end
