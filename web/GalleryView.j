@@ -45,12 +45,7 @@ var GRID_SIZE = 240.0;
 
         [self addSubview:scrollView];
 
-        /* Test */
-        var cb = function() {
-            var jsonString = @"{\"status\": 200, \"count\": 2, \"content\": [{\"name\": \"Ron Huang\", \"email\": \"a@a.org\", \"vote_count\": 3, \"image_url\": \"/artwork/1/image\"}, {\"name\": \"Darth Feces\", \"email\": \"b@b.org\", \"vote_count\": 6, \"image_url\": \"/artwork/2/image\"}]}";
-            [self loadFromJson:jsonString];
-        };
-        timer = [CPTimer scheduledTimerWithTimeInterval:1 callback:cb repeats:NO];
+        [self fetchData];
     }
 
     return self;
@@ -60,6 +55,31 @@ var GRID_SIZE = 240.0;
 {
     var jsObject = [jsonString objectFromJSON];
     [_artworksView setContent:jsObject["content"]];
+}
+
+- (void)fetchData
+{
+    var req = [CPURLRequest requestWithURL:@"/artworks"];
+    connection = [CPURLConnection connectionWithRequest:req delegate:self];
+
+    /* Test */
+    /*
+      var cb = function() {
+      var jsonString = @"{\"status\": 200, \"count\": 2, \"content\": [{\"name\": \"Ron Huang\", \"email\": \"a@a.org\", \"vote_count\": 3, \"image_url\": \"/artwork/1/image\"}, {\"name\": \"Darth Feces\", \"email\": \"b@b.org\", \"vote_count\": 6, \"image_url\": \"/artwork/2/image\"}]}";
+      [self loadFromJson:jsonString];
+      };
+      timer = [CPTimer scheduledTimerWithTimeInterval:1 callback:cb repeats:NO];
+    */
+}
+
+- (void)connection:(CPURLConnection) connection didReceiveData:(CPString)data
+{
+    [self loadFromJson:data];
+}
+
+- (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
+{
+    // TODO: show failed message.
 }
 
 @end

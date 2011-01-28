@@ -37,7 +37,7 @@ var VOTE_HEIGHT = 24.0;
         [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_bgView addSubview:_imageView];
     }
-    [_imageView setImage:[[CPImage alloc] initWithContentsOfFile:anObject["image_url"]]];
+    [_imageView setImage:[[CPImage alloc] initWithContentsOfFile:anObject["thumbnail_url"]]];
 
     if (!_nameTextView)
     {
