@@ -1,5 +1,10 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPBox.j>
+@import <AppKit/CPButton.j>
+
+var TOOL_HEIGHT = 100.0;
+var TOOL_HEIGHT_2 = TOOL_HEIGHT / 2.0;
+var SEP_WIDTH = 2.0;
 
 @implementation ContributeView : CPView
 {
@@ -12,24 +17,15 @@
     if (self)
     {
         var bounds = [self bounds];
+        var mainBundle = [CPBundle mainBundle];
 
-        var descLabel = [[CPTextField alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(bounds), 50.0)];
-        [descLabel setAutoresizingMask:CPViewWidthSizable | CPViewMaxYMargin];
-        [descLabel setStringValue:@"Short description."];
-        [descLabel setFont:[CPFont boldSystemFontOfSize:100.0]];
-        [descLabel sizeToFit];
-        [self addSubview:descLabel];
-
-        var quoteBox = [CPBox boxEnclosingView:descLabel];
-        [quoteBox setFillColor:[CPColor colorWithHexString:"FFFFFF"]];
-        [quoteBox setBorderType:CPLineBorder];
-        [quoteBox setBorderColor:[CPColor colorWithHexString:"C5C5C5"]];
-        [quoteBox setBorderWidth:1];
-        [quoteBox setCornerRadius:10];
-        [quoteBox setContentViewMargins:10];
-        [quoteBox setAutoresizingMask:CPViewMaxXMargin|CPViewMinXMargin];
-        [quoteBox setFrameOrigin:CGPointMake(([self frame].size.width-[descLabel frame].size.width)/2,10)];
-        [self addSubview:quoteBox];
+        var submitButton = [[CPButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 100.0, TOOL_HEIGHT)];
+        //var submitButton = [[CPButton alloc] initWithFrame:CGRectMakeZero()];
+        [submitButton setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+        var img = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"document-save-3.png"]];
+        [submitButton setImage:img];
+        [submitButton setImagePosition:CPImageOnly];
+        [self addSubview:submitButton];
     }
 
     return self;
