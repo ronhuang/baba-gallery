@@ -29,7 +29,8 @@
     var homeItem = [[CPTabViewItem alloc] initWithIdentifier:@"home"];
     [homeItem setLabel:@"Home"];
     var homeView = [[CPWebView alloc] initWithFrame:CPRectMakeZero()];
-    [homeView setMainFrameURL:@"Resources/home.html"];
+    var mainBundle = [CPBundle mainBundle];
+    [homeView setMainFrameURL:[mainBundle pathForResource:@"home.html"]];
     [homeItem setView:homeView];
     [tabView addTabViewItem:homeItem];
 
@@ -48,7 +49,7 @@
     [contentView addSubview:tabView];
 
     /* Test */
-    [tabView selectTabViewItemAtIndex:1];
+    [tabView selectTabViewItemAtIndex:2];
     CPLogRegister(CPLogConsole);
 
     [theWindow orderFront:self];
