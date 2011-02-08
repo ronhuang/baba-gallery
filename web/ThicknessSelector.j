@@ -1,5 +1,98 @@
 @import <AppKit/CPButton.j>
 
+var LABEL_HEIGHT = 26.0;
+var OFFSET_HEIGHT = 3.0;
+
+@implementation ThicknessSelector : CPView
+{
+    CPArray _buttons;
+    id _target;
+    SEL _action;
+    CPTextField _label;
+    CPString _title;
+}
+
+- (id)initWithFrame:(CGRect)aFrame thicknesses:(CPArray)anArray
+{
+    self = [super initWithFrame:aFrame];
+
+    if (self)
+    {
+        _buttons = [CPArray array];
+
+        var count = [anArray count];
+        var w = CGRectGetWidth(aFrame);
+        var h = (CGRectGetHeight(aFrame) - OFFSET_HEIGHT - LABEL_HEIGHT) / count;
+
+        // Add thickness buttons.
+        var tg = [ThicknessGroup new];
+        for (var i = 0; i < count; i++)
+        {
+            var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(0, h * i, w, h) thicknessGroup:tg];
+            [btn setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+            [btn setThickness:anArray[i]];
+            [self addSubview:btn];
+
+            [_buttons insertObject:btn atIndex:[_buttons count]];
+        }
+
+        if (_buttons[0])
+        {
+            // Default set the first button selected.
+            [_buttons[0] setObjectValue:1];
+        }
+
+        // Add Label.
+        _label = [[CPTextField alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(aFrame) - LABEL_HEIGHT, w, LABEL_HEIGHT)];
+        [_label setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+        [_label setAlignment:CPCenterTextAlignment];
+        [_label setTextColor:[CPColor colorWithCalibratedWhite:79.0 / 255.0 alpha:1.0]];
+        [self addSubview:_label];
+    }
+
+    return self;
+}
+
+- (void)setTitle:(CPString)aTitle
+{
+    [_label setStringValue:aTitle];
+}
+
+- (CPString)title
+{
+    return _title;
+}
+
+- (void)setAction:(SEL)anAction
+{
+    _action = anAction;
+    for (var i = [_buttons count]; i >= 0; i--)
+    {
+        [_buttons[i] setAction:anAction];
+    }
+}
+
+- (SEL)action
+{
+    return _action;
+}
+
+- (void)setTarget:(id)aTarget
+{
+    _target = aTarget;
+    for (var i = [_buttons count]; i >= 0; i--)
+    {
+        [_buttons[i] setTarget:aTarget];
+    }
+}
+
+- (id)target
+{
+    return _target;
+}
+
+@end
+
 @implementation ThicknessButton : CPButton
 {
     ThicknessGroup _thicknessGroup;

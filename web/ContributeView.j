@@ -1,7 +1,7 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPBox.j>
 @import <AppKit/CPButton.j>
-@import "ThicknessButton.j"
+@import "ThicknessSelector.j"
 
 var SEP_WIDTH = 10.0;
 var ICON_WIDTH = 64.0;
@@ -14,6 +14,7 @@ var TOOL_MARGIN = 15.0;
 @implementation ContributeView : CPView
 {
     CPView _toolView;
+    ThicknessSelector _thicknessSelector;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -41,33 +42,14 @@ var TOOL_MARGIN = 15.0;
         var x = [self _addButtonWithTitle:@"Picker" imagePath:@"color-picker.png" action:@selector(picker) atIndex:8];
 
         /* Brush thickness. */
-        var h = (TOOL_HEIGHT - ICON_DESCRIPTION_HEIGHT - TOOL_MARGIN) / 5;
-
-        var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN + h * 0, ICON_WIDTH, h)];
-        [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
-        [btn setThickness:1];
-        [btn setObjectValue:1];
-        [_toolView addSubview:btn];
-
-        var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN + h * 1, ICON_WIDTH, h) thicknessGroup:[btn thicknessGroup]];
-        [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
-        [btn setThickness:2];
-        [_toolView addSubview:btn];
-
-        var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN + h * 2, ICON_WIDTH, h) thicknessGroup:[btn thicknessGroup]];
-        [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
-        [btn setThickness:3];
-        [_toolView addSubview:btn];
-
-        var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN + h * 3, ICON_WIDTH, h) thicknessGroup:[btn thicknessGroup]];
-        [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
-        [btn setThickness:4];
-        [_toolView addSubview:btn];
-
-        var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN + h * 4, ICON_WIDTH, h) thicknessGroup:[btn thicknessGroup]];
-        [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
-        [btn setThickness:5];
-        [_toolView addSubview:btn];
+        var frame = CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
+        var thicknesses = [1, 2, 3, 4, 5];
+        _thicknessSelector = [[ThicknessSelector alloc] initWithFrame:frame thicknesses:thicknesses];
+        [_thicknessSelector setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+        [_thicknessSelector setTitle:@"Size"];
+        [_thicknessSelector setTarget:self];
+        [_thicknessSelector setAction:@selector(thickness)];
+        [_toolView addSubview:_thicknessSelector];
     }
 
     return self;
@@ -141,6 +123,11 @@ var TOOL_MARGIN = 15.0;
 - (void)picker
 {
     CPLog.trace(@"picker");
+}
+
+- (void)thickness
+{
+    CPLog.trace(@"thickness");
 }
 
 @end
