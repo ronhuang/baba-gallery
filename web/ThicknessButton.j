@@ -4,6 +4,8 @@
 {
     ThicknessGroup _thicknessGroup;
     int _thickness;
+    BOOL _highlighted @accessors(property=highlighted);
+    CGGradient _gradient;
 }
 
 // Designated Initializer
@@ -18,10 +20,15 @@
         [self setHighlightsBy:CPContentsCellMask];
         [self setShowsStateBy:CPContentsCellMask];
 
-        // Defaults?
-        //[self setImagePosition:CPImageOnly];
-
         [self setBordered:NO];
+
+        /*
+        _gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(),
+                                               [[CPColor colorWithHexString:@"e3f3fc"], [CPColor colorWithHexString:@"87b4cd"]],
+                                               [0, 1]);
+        */
+        var components = [170.0 / 255.0, 211.0 / 255.0, 233.0 / 255.0, 1.0, 135.0 / 255.0, 180.0 / 255.0, 205.0 / 255.0, 1.0];
+        _gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), components, [0.0, 1.0], 2);
     }
 
     return self;
@@ -59,11 +66,13 @@
     if ([self state] === CPOnState)
     {
         [_thicknessGroup _setSelectedThickness:self];
-        [self setBackgroundColor:[CPColor colorWithWhite:0.8 alpha:1.0]];
+        //[self setBackgroundColor:[CPColor colorWithHexString:@"a4cde5"]];
+        [self setHighlighted:YES];
     }
     else
     {
         [self setBackgroundColor:[CPColor clearColor]];
+        [self setHighlighted:NO];
     }
 }
 
@@ -71,6 +80,14 @@
 {
     var context = [[CPGraphicsContext currentContext] graphicsPort];
 
+    // Draw gradient highlight.
+    if ([self highlighted])
+    {
+        CGContextAddRect(context, aRect);
+        CGContextDrawLinearGradient(context, _gradient, CGPointMake(0.0, 0.0), CGPointMake(0.0, CGRectGetHeight(aRect)), 0);
+    }
+
+    // Draw thickness.
     var y = (CGRectGetHeight(aRect) - _thickness) / 2.0;
 	var rect = CPRectMake(0.0, y, CGRectGetWidth(aRect), _thickness);
     var color = [CPColor blackColor];
