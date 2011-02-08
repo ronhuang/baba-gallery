@@ -1,7 +1,7 @@
 @import <AppKit/CPView.j>
-@import <AppKit/CPBox.j>
 @import <AppKit/CPButton.j>
 @import "ThicknessSelector.j"
+@import "ColorWell.j"
 
 var SEP_WIDTH = 10.0;
 var ICON_WIDTH = 64.0;
@@ -50,6 +50,13 @@ var TOOL_MARGIN = 15.0;
         [_thicknessSelector setTarget:self];
         [_thicknessSelector setAction:@selector(thickness)];
         [_toolView addSubview:_thicknessSelector];
+
+        /* Current color. */
+        var frame = CGRectMake(x + ICON_WIDTH + SEP_WIDTH, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
+        var well = [[ColorWell alloc] initWithFrame:frame];
+        [well setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+        [well setTitle:@"Color"];
+        [_toolView addSubview:well];
     }
 
     return self;
@@ -123,11 +130,19 @@ var TOOL_MARGIN = 15.0;
 - (void)picker
 {
     CPLog.trace(@"picker");
+
+    var p = [CPColorPanel sharedColorPanel];
+    [p orderFront:self];
 }
 
 - (void)thickness
 {
     CPLog.trace(@"thickness");
+}
+
+- (void)color
+{
+    CPLog.trace(@"color");
 }
 
 @end
