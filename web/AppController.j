@@ -8,7 +8,6 @@
 
 @import <Foundation/CPObject.j>
 @import <AppKit/CPWebView.j>
-@import <AppKit/CPBox.j>
 @import "GalleryView.j"
 @import "ContributeView.j"
 
