@@ -81,7 +81,7 @@ var VOTE_HEIGHT = 24.0;
         _boxView = [CPBox boxEnclosingView:_bgView];
         [_boxView setBorderType:CPLineBorder];
         [_boxView setFillColor:[CPColor whiteColor]];
-        [_boxView setBorderColor:[CPColor colorWithHexString:"C5C5C5"]];
+        [_boxView setBorderColor:[CPColor colorWithHexString:@"C5C5C5"]];
         [_boxView setBorderWidth:3];
         [_boxView setCornerRadius:20];
         [_boxView setContentViewMargins:10];

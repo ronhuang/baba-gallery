@@ -43,7 +43,7 @@ var OFFSET_HEIGHT = 3.0;
     {
         _wellView = [[CPBox alloc] initWithFrame:aRect];
         [_wellView setBorderType:CPLineBorder];
-        [_wellView setBorderColor:[CPColor colorWithHexString:"C5C5C5"]];
+        [_wellView setBorderColor:[CPColor colorWithHexString:@"C5C5C5"]];
         [_wellView setBorderWidth:3];
         [_wellView setCornerRadius:10];
         [_wellView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];

@@ -114,11 +114,6 @@ var OFFSET_HEIGHT = 3.0;
 
         [self setBordered:NO];
 
-        /*
-        _gradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(),
-                                               [[CPColor colorWithHexString:@"e3f3fc"], [CPColor colorWithHexString:@"87b4cd"]],
-                                               [0, 1]);
-        */
         var components = [170.0 / 255.0, 211.0 / 255.0, 233.0 / 255.0, 1.0, 135.0 / 255.0, 180.0 / 255.0, 205.0 / 255.0, 1.0];
         _gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), components, [0.0, 1.0], 2);
     }
@@ -158,7 +153,6 @@ var OFFSET_HEIGHT = 3.0;
     if ([self state] === CPOnState)
     {
         [_thicknessGroup _setSelectedThickness:self];
-        //[self setBackgroundColor:[CPColor colorWithHexString:@"a4cde5"]];
         [self setHighlighted:YES];
     }
     else
