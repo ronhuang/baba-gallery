@@ -9,7 +9,6 @@ var OFFSET_HEIGHT = 3.0;
     id _target;
     SEL _action;
     CPTextField _label;
-    CPString _title;
 }
 
 - (id)initWithFrame:(CGRect)aFrame thicknesses:(CPArray)anArray
@@ -60,7 +59,7 @@ var OFFSET_HEIGHT = 3.0;
 
 - (CPString)title
 {
-    return _title;
+    return [_label stringValue];
 }
 
 - (void)setAction:(SEL)anAction
