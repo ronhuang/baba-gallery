@@ -130,9 +130,6 @@ var TOOL_MARGIN = 15.0;
 - (void)picker
 {
     CPLog.trace(@"picker");
-
-    var p = [CPColorPanel sharedColorPanel];
-    [p orderFront:self];
 }
 
 - (void)thickness
