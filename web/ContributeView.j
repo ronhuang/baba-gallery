@@ -2,6 +2,7 @@
 @import <AppKit/CPButton.j>
 @import "ThicknessSelector.j"
 @import "ColorWell.j"
+@import "CanvasView.j"
 
 var SEP_WIDTH = 10.0;
 var ICON_WIDTH = 64.0;
@@ -15,6 +16,7 @@ var TOOL_MARGIN = 15.0;
 {
     CPView _toolView;
     ThicknessSelector _thicknessSelector;
+    CanvasView _canvasView;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -57,6 +59,16 @@ var TOOL_MARGIN = 15.0;
         [well setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
         [well setTitle:@"Color"];
         [_toolView addSubview:well];
+
+        /* Canvas */
+        var mainBundle = [CPBundle mainBundle];
+        var path = [mainBundle pathForResource:@"original.jpg"];
+        var image = [[CPImage alloc] initWithContentsOfFile:path];
+
+        _canvasView = [[CanvasView alloc] initWithFrame:CGRectMake(0.0, TOOL_HEIGHT, CGRectGetWidth(bounds), CGRectGetHeight(bounds) - TOOL_HEIGHT)];
+        [_canvasView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+        [_canvasView setImage:image];
+        [self addSubview:_canvasView];
     }
 
     return self;
