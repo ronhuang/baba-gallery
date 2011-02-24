@@ -1,0 +1,5 @@
+@implementation CanvasLayer : CALayer
+{
+}
+
+@end

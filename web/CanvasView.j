@@ -1,12 +1,12 @@
 @import <AppKit/CPView.j>
-@import "Canvas.j"
+@import "CanvasLayer.j"
 
 @implementation CanvasView : CPView
 {
     CALayer _backgroundLayer;
     CPImage _image;
 
-    Canvas _drawingLayer;
+    CanvasLayer _drawingLayer;
 }
 
 - (id)initWithFrame:(CGRect)aFrame
