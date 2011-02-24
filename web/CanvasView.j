@@ -3,10 +3,8 @@
 
 @implementation CanvasView : CPView
 {
-    CALayer _backgroundLayer;
-    CPImage _image;
-
-    CanvasLayer _drawingLayer;
+    ImageLayer _rootLayer;
+    CALayer _drawingLayer;
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -15,14 +13,20 @@
 
     if (self)
     {
-        _backgroundLayer = [CALayer layer];
+        _rootLayer = [ImageLayer layer];
 
         [self setWantsLayer:YES];
-        [self setLayer:_backgroundLayer];
+        [self setLayer:_rootLayer];
 
-        [_backgroundLayer setDelegate:self];
+        _drawingLayer = [CALayer layer];
+        [_drawingLayer setDelegate:self];
+        [_drawingLayer setAnchorPoint:CGPointMakeZero()];
 
-        [_backgroundLayer setNeedsDisplay];
+        [_rootLayer addSublayer:_drawingLayer];
+
+        [_drawingLayer setNeedsDisplay];
+
+        [_rootLayer setNeedsDisplay];
     }
 
     return self;
@@ -30,27 +34,22 @@
 
 - (void)setImage:(CPImage)anImage
 {
-    if (_image == anImage)
-        return;
-
-    _image = anImage;
-
-    [_backgroundLayer setNeedsDisplay];
-}
-
-- (void)imageDidLoad:(CPImage)anImage
-{
-    [_backgroundLayer setNeedsDisplay];
+    [_rootLayer setImage:anImage];
 }
 
 - (void)drawLayer:(CALayer)aLayer inContext:(CGContext)aContext
 {
-    var bounds = [aLayer bounds];
+    CGContextSaveGState(aContext);
+    CGContextTranslateCTM(aContext, CGRectGetMinX([aLayer bounds]), 0.0);
 
-    if ([_image loadStatus] != CPImageLoadStatusCompleted)
-        [_image setDelegate:self];
-    else
-        CGContextDrawImage(aContext, bounds, _image);
+
+    /*
+    CGContextSetStrokeColor(aContext, [CPColor redColor]);
+    CGContextStrokeRect(aContext, CGRectMake(150.0, 100.0, 50.0, 100.0));
+    */
+
+
+    CGContextRestoreGState(aContext);
 }
 
 - (void)resizeWithOldSuperviewSize:(CGSize)aSize
@@ -68,6 +67,9 @@
         x = (w - size) / 2.0; // center
 
     [self setFrame:CGRectMake(x, y, size, size)];
+
+    // Set bounds for sublayer as well.
+    [_drawingLayer setBounds:CGRectMake(x, 0.0, size, size)];
 }
 
 @end
