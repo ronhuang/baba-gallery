@@ -46,13 +46,28 @@
 - (void)drawLayer:(CALayer)aLayer inContext:(CGContext)aContext
 {
     var bounds = [aLayer bounds];
-    var size = MIN(CGRectGetWidth(bounds), CGRectGetHeight(bounds));
-    var ib = CGRectMake((CGRectGetWidth(bounds) - size) / 2.0, (CGRectGetHeight(bounds) - size) / 2.0, size, size);
 
     if ([_image loadStatus] != CPImageLoadStatusCompleted)
         [_image setDelegate:self];
     else
-        CGContextDrawImage(aContext, ib, _image);
+        CGContextDrawImage(aContext, bounds, _image);
+}
+
+- (void)resizeWithOldSuperviewSize:(CGSize)aSize
+{
+    var cframe = [self frame];
+    var pframe = [[self superview] frame];
+
+    var x = 0.0;
+    var y = CGRectGetMinY(cframe);
+    var w = CGRectGetWidth(pframe);
+    var h = CGRectGetHeight(pframe) - CGRectGetMinY(cframe);
+    var size = MIN(w, h);
+
+    if (w > size)
+        x = (w - size) / 2.0; // center
+
+    [self setFrame:CGRectMake(x, y, size, size)];
 }
 
 @end
