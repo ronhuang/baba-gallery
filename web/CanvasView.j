@@ -1,5 +1,5 @@
 @import <AppKit/CPView.j>
-@import "CanvasLayer.j"
+@import "ImageLayer.j"
 
 @implementation CanvasView : CPView
 {
