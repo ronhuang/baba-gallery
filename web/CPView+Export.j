@@ -267,7 +267,7 @@ var Canvas2Image = (function() {
   return clonedElement;
 }
 
-- (DOMElement)mergedImage
+- (DOMElement)mergedImageInDataUriScheme
 {
     var canvasElements = _DOMElement.getElementsByTagName("canvas"),
         count = canvasElements.length,
@@ -289,5 +289,6 @@ var Canvas2Image = (function() {
         mergedCanvas.getContext("2d").drawImage(cc, 0, 0);
     }
 
-    return Canvas2Image.saveAsJPEG(mergedCanvas, true);
+    var img = Canvas2Image.saveAsJPEG(mergedCanvas, true)
+    return img.src;
 }

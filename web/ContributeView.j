@@ -147,19 +147,18 @@ var TOOL_MARGIN = 15.0;
     [_submittingAlert runModal];
 
     // Submit to server.
-    var img = [_canvasView mergedImage];
+    var data = [_canvasView mergedImageInDataUriScheme];
 
-    var content = [[CPString alloc] initWithFormat:@"image=%@", [img.src urlencode]];
+    var content = [[CPString alloc] initWithFormat:@"image=%@", encodeURIComponent(data)];
     var contentLength = [[CPString alloc] initWithFormat:@"%d", [content length]];
 
     var req = [[CPURLRequest alloc] initWithURL:@"/artworks"];
     [req setHTTPMethod:@"POST"];
     [req setHTTPBody:content];
-    [req setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+    //[req setValue:contentLength forHTTPHeaderField:@"Content-Length"];
     [req setValue:"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 
-    var conn = [CPURLConnection connectionWithRequest:req delegate:self];
-	[conn start];
+    [CPURLConnection connectionWithRequest:req delegate:self];
 }
 
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
