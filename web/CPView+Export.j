@@ -266,3 +266,28 @@ var Canvas2Image = (function() {
   }
   return clonedElement;
 }
+
+- (DOMElement)mergedImage
+{
+    var canvasElements = _DOMElement.getElementsByTagName("canvas"),
+        count = canvasElements.length,
+        mergedCanvas = nil;
+
+    while (count--)
+    {
+        var cc = canvasElements[count];
+
+        if (!mergedCanvas)
+        {
+            mergedCanvas = document.createElement("canvas");
+			mergedCanvas.width = cc.width;
+			mergedCanvas.height = cc.height;
+			mergedCanvas.style.width = cc.width+"px";
+			mergedCanvas.style.height = cc.height+"px";
+        }
+
+        mergedCanvas.getContext("2d").drawImage(cc, 0, 0);
+    }
+
+    return Canvas2Image.saveAsJPEG(mergedCanvas, true);
+}
