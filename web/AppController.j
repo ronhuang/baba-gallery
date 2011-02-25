@@ -13,6 +13,8 @@
 
 @implementation AppController : CPObject
 {
+    CPTabViewItem _galleryItem;
+    CPView _galleryView;
 }
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
@@ -24,6 +26,7 @@
     [tabView setTabViewType:CPTopTabsBezelBorder];
     [tabView layoutSubviews];
     [tabView setAutoresizingMask: CPViewHeightSizable | CPViewWidthSizable];
+    [tabView setDelegate:self];
 
     var homeItem = [[CPTabViewItem alloc] initWithIdentifier:@"home"];
     [homeItem setLabel:@"Home"];
@@ -33,11 +36,11 @@
     [homeItem setView:homeView];
     [tabView addTabViewItem:homeItem];
 
-    var galleryItem = [[CPTabViewItem alloc] initWithIdentifier:@"gallery"];
-    [galleryItem setLabel:"Gallery"];
-    var galleryView = [[GalleryView alloc] initWithFrame:CPRectMakeZero()];
-    [galleryItem setView:galleryView];
-    [tabView addTabViewItem:galleryItem];
+    _galleryItem = [[CPTabViewItem alloc] initWithIdentifier:@"gallery"];
+    [_galleryItem setLabel:"Gallery"];
+    _galleryView = [[GalleryView alloc] initWithFrame:CPRectMakeZero()];
+    [_galleryItem setView:_galleryView];
+    [tabView addTabViewItem:_galleryItem];
 
     var contributeItem = [[CPTabViewItem alloc] initWithIdentifier:@"contribute"];
     [contributeItem setLabel:"Contribute"];
@@ -52,6 +55,14 @@
     CPLogRegister(CPLogConsole);
 
     [theWindow orderFront:self];
+}
+
+- (void) tabView:(CPTabView)aView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    if (anItem == _galleryItem)
+    {
+        [_galleryView fetchData];
+    }
 }
 
 @end

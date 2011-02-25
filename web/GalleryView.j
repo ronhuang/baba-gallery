@@ -9,6 +9,7 @@ var GRID_SIZE = 240.0;
 @implementation GalleryView : CPView
 {
     CPCollectionView _artworksView;
+    CPURLConnection _conn;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -44,8 +45,6 @@ var GRID_SIZE = 240.0;
         [scrollView setAutohidesScrollers:YES];
 
         [self addSubview:scrollView];
-
-        [self fetchData];
     }
 
     return self;
@@ -53,33 +52,32 @@ var GRID_SIZE = 240.0;
 
 - (void)loadFromJson:(CPString)jsonString
 {
-    var jsObject = [jsonString objectFromJSON];
-    [_artworksView setContent:jsObject["content"]];
+    var jsObject = [jsonString objectFromJSON],
+        content = jsObject["content"];
+
+    if ([_artworksView items].length != content.length)
+        [_artworksView setContent:content];
 }
 
 - (void)fetchData
 {
-    var req = [CPURLRequest requestWithURL:@"/artworks"];
-    connection = [CPURLConnection connectionWithRequest:req delegate:self];
+    if (_conn)
+        return;
 
-    /* Test */
-    /*
-      var cb = function() {
-      var jsonString = @"{\"status\": 200, \"count\": 2, \"content\": [{\"name\": \"Ron Huang\", \"email\": \"a@a.org\", \"vote_count\": 3, \"image_url\": \"/artwork/1/image\"}, {\"name\": \"Darth Feces\", \"email\": \"b@b.org\", \"vote_count\": 6, \"image_url\": \"/artwork/2/image\"}]}";
-      [self loadFromJson:jsonString];
-      };
-      timer = [CPTimer scheduledTimerWithTimeInterval:1 callback:cb repeats:NO];
-    */
+    var req = [CPURLRequest requestWithURL:@"/artworks"];
+    _conn = [CPURLConnection connectionWithRequest:req delegate:self];
 }
 
 - (void)connection:(CPURLConnection) connection didReceiveData:(CPString)data
 {
+    _conn = nil;
     [self loadFromJson:data];
 }
 
 - (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
 {
     // TODO: show failed message.
+    _conn = nil;
 }
 
 @end
