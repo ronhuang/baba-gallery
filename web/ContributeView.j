@@ -120,6 +120,20 @@ var TOOL_MARGIN = 15.0;
 
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
 {
+    if (theAlert == _confirmAlert)
+    {
+        [self handleConfirmAlert:returnCode];
+    }
+    else if (theAlert == _resultAlert)
+    {
+        [self handleResultAlert:returnCode];
+    }
+}
+
+- (void)handleConfirmAlert:(int)returnCode
+{
+    _confirmAlert = nil;
+
     if (returnCode != 0)
     {
         // Yes - 0
@@ -132,9 +146,7 @@ var TOOL_MARGIN = 15.0;
     _submittingAlert = [[SubmittingDialog alloc] init];
     [_submittingAlert runModal];
 
-
     // Submit to server.
-    /*
     var img = [_canvasView mergedImage];
 
     var content = [[CPString alloc] initWithFormat:@"image=%@", [img.src urlencode]];
@@ -148,23 +160,38 @@ var TOOL_MARGIN = 15.0;
 
     var conn = [CPURLConnection connectionWithRequest:req delegate:self];
 	[conn start];
-    */
-
-
-    // Close alert after successful submission (or timeout.)
-    // If success, show thank you alert and reset the ContributeView.
 }
 
-- (void)connection:(CPURLConnection) connection didReceiveData:(CPString)data
+- (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
-    //This method is called when a connection receives a response. in a
-    //multi-part request, this method will (eventually) be called multiple times,
-    //once for each part in the response.
+    if (_submittingAlert)
+    {
+        [_submittingAlert close];
+        _submittingAlert = nil;
+    }
+
+    _resultAlert = [CPAlert alertWithMessageText:@"Thank you for your contribution." defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"You can go to the Gallery to view your work."];
+    [_resultAlert setDelegate:self];
+    [_resultAlert runModal];
 }
 
 - (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
 {
-    //This method is called if the request fails for any reason.
+    if (_submittingAlert)
+    {
+        [_submittingAlert close];
+        _submittingAlert = nil;
+    }
+
+    var alert = [CPAlert alertWithError:@""];
+    [alert runModal];
+}
+
+- (void)handleResultAlert:(int)returnCode
+{
+    _resultAlert = nil;
+
+    // TODO: Reset the ContributeView.
 }
 
 - (void)undo
