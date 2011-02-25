@@ -1,8 +1,11 @@
 @import <AppKit/CPView.j>
 @import <AppKit/CPButton.j>
+@import <AppKit/CPAlert.j>
 @import "ThicknessSelector.j"
 @import "ColorWell.j"
 @import "CanvasView.j"
+@import "CPView+Export.j"
+@import "SubmittingDialog.j"
 
 var SEP_WIDTH = 10.0;
 var ICON_WIDTH = 64.0;
@@ -17,6 +20,10 @@ var TOOL_MARGIN = 15.0;
     CPView _toolView;
     ThicknessSelector _thicknessSelector;
     CanvasView _canvasView;
+
+    CPAlert _confirmAlert;
+    CPPanel _submittingAlert;
+    CPAlert _resultAlert;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -106,7 +113,58 @@ var TOOL_MARGIN = 15.0;
 
 - (void)submit
 {
-    CPLog.trace(@"submit");
+    _confirmAlert = [CPAlert alertWithMessageText:@"Ready to submit your work?" defaultButton:@"Submit" alternateButton:@"Cancel" otherButton:nil informativeTextWithFormat:@"Click Submit to submit your work to the server. Click Cancel if you want to continue the restoration."];
+    [_confirmAlert setDelegate:self];
+    [_confirmAlert runModal];
+}
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
+{
+    if (returnCode != 0)
+    {
+        // Yes - 0
+        // No - 1
+        // User clicked No. Do nothing.
+        return;
+    }
+
+    // Show submitting alert.
+    _submittingAlert = [[SubmittingDialog alloc] init];
+    [_submittingAlert runModal];
+
+
+    // Submit to server.
+    /*
+    var img = [_canvasView mergedImage];
+
+    var content = [[CPString alloc] initWithFormat:@"image=%@", [img.src urlencode]];
+    var contentLength = [[CPString alloc] initWithFormat:@"%d", [content length]];
+
+    var req = [[CPURLRequest alloc] initWithURL:@"/artworks"];
+    [req setHTTPMethod:@"POST"];
+    [req setHTTPBody:content];
+    [req setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+    [req setValue:"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+
+    var conn = [CPURLConnection connectionWithRequest:req delegate:self];
+	[conn start];
+    */
+
+
+    // Close alert after successful submission (or timeout.)
+    // If success, show thank you alert and reset the ContributeView.
+}
+
+- (void)connection:(CPURLConnection) connection didReceiveData:(CPString)data
+{
+    //This method is called when a connection receives a response. in a
+    //multi-part request, this method will (eventually) be called multiple times,
+    //once for each part in the response.
+}
+
+- (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
+{
+    //This method is called if the request fails for any reason.
 }
 
 - (void)undo
