@@ -1,10 +1,15 @@
 @import <AppKit/CPView.j>
 @import "ImageLayer.j"
+@import "CPMutableArray+Queue.j"
 
 @implementation CanvasView : CPView
 {
     ImageLayer _rootLayer;
     CALayer _drawingLayer;
+
+    CPMutableArray _drawPoints;
+    CPMutableArray _allPoints;
+    int _currentIndex;
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -27,6 +32,11 @@
         [_drawingLayer setNeedsDisplay];
 
         [_rootLayer setNeedsDisplay];
+
+        // Drawing
+        _drawPoints = [];
+        _allPoints = [];
+        _currentIndex = 0;
     }
 
     return self;
@@ -43,10 +53,41 @@
     CGContextTranslateCTM(aContext, CGRectGetMinX([aLayer bounds]), 0.0);
 
 
-    /*
+    // FIXME: use correct color
     CGContextSetStrokeColor(aContext, [CPColor redColor]);
-    CGContextStrokeRect(aContext, CGRectMake(150.0, 100.0, 50.0, 100.0));
+
+
+    CGContextBeginPath(aContext);
+
+    var point = nil;
+    if ([_allPoints count] > 0)
+    {
+        point = [_allPoints objectAtIndex:0];
+        CGContextMoveToPoint(aContext, point.x, point.y);
+    }
+
+    for (i = 0; i < [_allPoints count]; i++)
+    {
+        point = [_allPoints objectAtIndex:i];
+        CGContextAddLineToPoint(aContext, point.x, point.y);
+    }
+
+
+    /*
+    var point = [_drawPoints pop];
+    if (point)
+        CGContextMoveToPoint(aContext, point.x, point.y);
+
+    while (point)
+    {
+        CGContextAddLineToPoint(aContext, point.x, point.y);
+        CGContextStrokeRect(aContext, CGRectMake(point.x, point.y, 1.0, 1.0));
+
+        point = [_drawPoints pop];
+    }
     */
+
+    CGContextStrokePath(aContext);
 
 
     CGContextRestoreGState(aContext);
@@ -70,6 +111,31 @@
 
     // Set bounds for sublayer as well.
     [_drawingLayer setBounds:CGRectMake(x, 0.0, size, size)];
+}
+
+- (void)mouseDown:(CPEvent)anEvent
+{
+    var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
+}
+
+- (void)mouseDragged:(CPEvent)anEvent
+{
+    var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
+
+    [_drawPoints push:point];
+    [_allPoints push:point];
+
+    [_drawingLayer setNeedsDisplay];
+}
+
+- (void)mouseUp:(CPEvent)anEvent
+{
+    var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
+
+    [_drawPoints push:point];
+    [_allPoints push:point];
+
+    [_drawingLayer setNeedsDisplay];
 }
 
 @end
