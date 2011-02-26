@@ -57,6 +57,7 @@ class ArtworksAction(webapp.RequestHandler):
         Just get all artworks and return as JSON.
         """
         artworks = Artwork.all()
+        artworks.order('-created_at')
 
         jj = json.dumps({
             'status': 200,
