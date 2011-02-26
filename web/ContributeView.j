@@ -88,6 +88,7 @@ var TOOL_MARGIN = 15.0;
 
         /* Drawing logics */
         [self addObserver:_canvasView forKeyPath:@"tool" options:CPKeyValueObservingOptionNew context:NULL];
+        [_canvasView addObserver:well forKeyPath:@"color" options:CPKeyValueObservingOptionNew context:NULL];
         [self setTool:@"pencil"];
     }
 

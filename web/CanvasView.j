@@ -17,6 +17,8 @@ TOOL_PICKER = 2;
     int _currentIndex;
 
     var _attribute;
+
+    CPColor _color @accessors(property=color);
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -164,18 +166,31 @@ TOOL_PICKER = 2;
 {
     var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
 
-    [_pixels push:{point:point, attribute:_attribute}];
-
-    [_drawingLayer setNeedsDisplay];
+    if (_attribute.tool == TOOL_PENCIL || _attribute.tool == TOOL_ERASER)
+    {
+        [_pixels push:{point:point, attribute:_attribute}];
+        [_drawingLayer setNeedsDisplay];
+    }
 }
 
 - (void)mouseUp:(CPEvent)anEvent
 {
     var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
 
-    [_pixels push:{point:point, attribute:_attribute, break:YES}];
+    if (_attribute.tool == TOOL_PENCIL || _attribute.tool == TOOL_ERASER)
+    {
+        [_pixels push:{point:point, attribute:_attribute, break:YES}];
+        [_drawingLayer setNeedsDisplay];
+    }
+    else if (_attribute.tool == TOOL_PICKER)
+    {
+        var color = [self colorAt:point];
 
-    [_drawingLayer setNeedsDisplay];
+        _attribute = [self cloneAttribute];
+        _attribute.color = color;
+
+        [self setColor:color]; // Will notify color well.
+    }
 }
 
 - (void)colorWellDidChangeColor:(CPNotification)aNotification

@@ -292,3 +292,26 @@ var Canvas2Image = (function() {
     var img = Canvas2Image.saveAsJPEG(mergedCanvas, true)
     return img.src;
 }
+
+- (CPColor)colorAt:(CPPoint)aPoint
+{
+    var canvasElements = _DOMElement.getElementsByTagName("canvas");
+
+    var ca = canvasElements[0].getContext("2d").getImageData(aPoint.x, aPoint.y, 1, 1).data;
+    var cb = canvasElements[1].getContext("2d").getImageData(aPoint.x, aPoint.y, 1, 1).data;
+
+    var ra = ca[0], rb = cb[0];
+    var ga = ca[1], gb = cb[1];
+    var ba = ca[2], bb = cb[2];
+    var aa = ca[3], ab = cb[3], iaa = 255 - aa;
+    var a0 = aa + ab * (255 - aa);
+
+    if (a0 <= 0)
+        return [CPColor clearColor];
+
+    var r = MIN(255, (ra * aa + rb * ab * iaa) / a0) / 255.0;
+    var g = MIN(255, (ga * aa + gb * ab * iaa) / a0) / 255.0;
+    var b = MIN(255, (ba * aa + bb * ab * iaa) / a0) / 255.0;
+
+    return [CPColor colorWithRed:r green:g blue:b alpha:1.0];
+}

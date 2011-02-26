@@ -95,4 +95,13 @@ var OFFSET_HEIGHT = 3.0;
     return [_label stringValue];
 }
 
+- (void)observeValueForKeyPath:(CPString)aKeyPath
+                      ofObject:(id)anObject
+                        change:(CPDictionary)aChange
+                       context:(id)aContext
+{
+    if (@"color" == aKeyPath)
+        [self setColor:[aChange objectForKey:CPKeyValueChangeNewKey]];
+}
+
 @end
