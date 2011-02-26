@@ -84,6 +84,7 @@ TOOL_PICKER = 2;
         point = nil,
         color = nil,
         thickness = nil,
+        tool = nil,
         i = 0,
         wasBreak = true;
 
@@ -95,16 +96,30 @@ TOOL_PICKER = 2;
     {
         pixel = [_pixels objectAtIndex:i];
         point = pixel.point;
-        color = pixel.attribute.color;
-        thickness = pixel.attribute.thickness;
 
         if (wasBreak)
         {
             CGContextStrokePath(aContext);
 
+            tool = pixel.attribute.tool;
+
             CGContextBeginPath(aContext);
-            CGContextSetStrokeColor(aContext, color);
-            CGContextSetLineWidth(aContext, thickness);
+            CGContextSetStrokeColor(aContext, pixel.attribute.color);
+            CGContextSetLineWidth(aContext, pixel.attribute.thickness);
+
+            switch(tool)
+            {
+            case TOOL_PENCIL:
+                CGContextSetBlendMode(aContext, 0);
+                break;
+            case TOOL_ERASER:
+                CGContextSetBlendMode(aContext, 23);
+                break;
+            default:
+                CPLog.warning(@"Invalid tool: %@", tool);
+                break;
+            }
+
             CGContextMoveToPoint(aContext, point.x, point.y);
         }
 
