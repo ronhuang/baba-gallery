@@ -15,9 +15,6 @@ handlers:
   script: backend.py
 
 # Static
-- url: /web
-  static_dir: web
-
 - url: /
   static_files: public/index.html
   upload: public/index.html
