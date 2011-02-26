@@ -279,4 +279,19 @@ TOOL_PICKER = 2;
     return tmp;
 }
 
+- (BOOL)dirty
+{
+    return !!_currentIndex;
+}
+
+- (void)reset
+{
+    if (![self dirty])
+        return;
+
+    [_pixels removeAllObjects];
+    [self setCurrentIndex:{current:0, previous:nil}];
+    [[[self window] undoManager] removeAllActions];
+}
+
 @end

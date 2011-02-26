@@ -28,6 +28,7 @@ var TOOL_MARGIN = 15.0;
     CPButton _pickerButton;
     CPButton _currentButton;
 
+    CPAlert _resetAlert;
     CPAlert _confirmAlert;
     CPPanel _submittingAlert;
     CPAlert _resultAlert;
@@ -187,7 +188,22 @@ var TOOL_MARGIN = 15.0;
 
 - (void)new
 {
-    CPLog.trace(@"new");
+    if (![_canvasView dirty])
+        return;
+
+    _resetAlert = [CPAlert alertWithMessageText:@"Create new canvas?" defaultButton:@"OK" alternateButton:@"Cancel" otherButton:nil informativeTextWithFormat:@"Click OK to create a new canvas. Your work will not be submitted to the server. Click Cancel if you want to continue the restoration."];
+    [_resetAlert setDelegate:self];
+    [_resetAlert runModal];
+}
+
+- (void)reset
+{
+    if (![_canvasView dirty])
+        return;
+
+    [_undoButton setEnabled:NO];
+    [_redoButton setEnabled:NO];
+    [_canvasView reset];
 }
 
 - (void)submit
@@ -199,7 +215,11 @@ var TOOL_MARGIN = 15.0;
 
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
 {
-    if (theAlert == _confirmAlert)
+    if (theAlert == _resetAlert)
+    {
+        [self handleResetAlert:returnCode];
+    }
+    else if (theAlert == _confirmAlert)
     {
         [self handleConfirmAlert:returnCode];
     }
@@ -207,6 +227,21 @@ var TOOL_MARGIN = 15.0;
     {
         [self handleResultAlert:returnCode];
     }
+}
+
+- (void)handleResetAlert:(int)returnCode
+{
+    _resetAlert = nil;
+
+    if (returnCode != 0)
+    {
+        // Yes - 0
+        // No - 1
+        // User clicked No. Do nothing.
+        return;
+    }
+
+    [self reset];
 }
 
 - (void)handleConfirmAlert:(int)returnCode
@@ -269,7 +304,7 @@ var TOOL_MARGIN = 15.0;
 {
     _resultAlert = nil;
 
-    // TODO: Reset the ContributeView.
+    [self reset];
 }
 
 - (void)undo
