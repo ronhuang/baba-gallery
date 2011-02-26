@@ -1,6 +1,6 @@
 /*
  * AppController.j
- * web
+ * Baba Painter
  *
  * Created by Ron Huang on January 26, 2011.
  * Copyright 2011, Ron Huang All rights reserved.

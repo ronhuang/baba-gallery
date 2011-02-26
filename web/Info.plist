@@ -5,8 +5,12 @@
 	<key>CPApplicationDelegateClass</key>
 	<string>AppController</string>
 	<key>CPBundleName</key>
-	<string>web</string>
+	<string>BabaPainter</string>
 	<key>CPPrincipalClass</key>
 	<string>CPApplication</string>
+	<key>CPDescription</key>
+	<string>
+		Baba Painter is a serious interactive art installation serving two purposes: first, as a training and experimental restoration installation for restoration experts to practice and hone their skills, and secondly, for the creation of fun, social networking activities.
+	</string>
 </dict>
 </plist>
