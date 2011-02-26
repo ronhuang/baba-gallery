@@ -51,15 +51,15 @@ var TOOL_MARGIN = 15.0;
         [self addSubview:_toolView];
 
         /* Action buttons. */
-        [self _addButtonWithTitle:@"New" imagePath:@"document-new.png" action:@selector(new) atBase:0];
-        [self _addButtonWithTitle:@"Submit" imagePath:@"document-save-3.png" action:@selector(submit) atBase:1];
+        [self _addButtonWithTitle:@"New" imagePath:@"document-new.png" altImagePath:@"document-new-alt.png" action:@selector(new) atBase:0];
+        [self _addButtonWithTitle:@"Submit" imagePath:@"document-save-3.png" altImagePath:@"document-save-3-alt.png" action:@selector(submit) atBase:1];
 
-        _undoButton = [self _addButtonWithTitle:@"Undo" imagePath:@"edit-undo.png" action:@selector(undo) atBase:2.25];
-        _redoButton = [self _addButtonWithTitle:@"Redo" imagePath:@"edit-redo.png" action:@selector(redo) atBase:3.25];
+        _undoButton = [self _addButtonWithTitle:@"Undo" imagePath:@"edit-undo.png" altImagePath:@"edit-undo-alt.png" action:@selector(undo) atBase:2.25];
+        _redoButton = [self _addButtonWithTitle:@"Redo" imagePath:@"edit-redo.png" altImagePath:@"edit-redo-alt.png" action:@selector(redo) atBase:3.25];
 
-        _pencilButton = [self _addButtonWithTitle:@"Pencil" imagePath:@"draw-brush.png" action:@selector(pencil) atBase:4.5];
-        _eraserButton = [self _addButtonWithTitle:@"Eraser" imagePath:@"draw-eraser-2.png" action:@selector(eraser) atBase:5.5];
-        _pickerButton = [self _addButtonWithTitle:@"Picker" imagePath:@"color-picker.png" action:@selector(picker) atBase:6.5];
+        _pencilButton = [self _addButtonWithTitle:@"Pencil" imagePath:@"draw-brush.png" altImagePath:@"draw-brush-alt.png" action:@selector(pencil) atBase:4.5];
+        _eraserButton = [self _addButtonWithTitle:@"Eraser" imagePath:@"draw-eraser-2.png" altImagePath:@"draw-eraser-2-alt.png" action:@selector(eraser) atBase:5.5];
+        _pickerButton = [self _addButtonWithTitle:@"Picker" imagePath:@"color-picker.png" altImagePath:@"color-picker-alt.png" action:@selector(picker) atBase:6.5];
 
         /* Brush thickness. */
         var x = CGRectGetMaxX([_pickerButton frame]) + SEP_WIDTH + ICON_WIDTH * 0.25 + SEP_WIDTH;
@@ -116,7 +116,7 @@ var TOOL_MARGIN = 15.0;
     return self;
 }
 
-- (CPButton)_addButtonWithTitle:(CPString)aTitle imagePath:(CPString)aImagePath action:(SEL)anAction atBase:(float)aBase
+- (CPButton)_addButtonWithTitle:(CPString)aTitle imagePath:(CPString)aImagePath altImagePath:(CPString)anAltImagePath action:(SEL)anAction atBase:(float)aBase
 {
     var mainBundle = [CPBundle mainBundle];
     var x = aBase * (ICON_WIDTH + SEP_WIDTH);
@@ -131,8 +131,8 @@ var TOOL_MARGIN = 15.0;
 
     var img = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:aImagePath] size:CGSizeMake(ICON_WIDTH, ICON_HEIGHT)];
     [btn setImage:img];
-    //var altImg = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:anAltImagePath]];
-    //[btn setAlternateImage:altImg];
+    var altImg = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:anAltImagePath]];
+    [btn setAlternateImage:altImg];
 
     [btn setTarget:self];
     [btn setAction:anAction];
