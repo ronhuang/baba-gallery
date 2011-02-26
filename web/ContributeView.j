@@ -117,7 +117,6 @@ var TOOL_MARGIN = 15.0;
 
     [_toolView addSubview:btn];
 
-    //return x + ICON_WIDTH + SEP_WIDTH;
     return btn;
 }
 
@@ -254,12 +253,12 @@ var TOOL_MARGIN = 15.0;
 
 - (void)undo
 {
-    CPLog.trace(@"undo");
+    [[[self window] undoManager] undo];
 }
 
 - (void)redo
 {
-    CPLog.trace(@"redo");
+    [[[self window] undoManager] redo];
 }
 
 - (void)pencil

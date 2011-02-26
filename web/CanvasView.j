@@ -14,6 +14,7 @@ TOOL_PICKER = 2;
     CALayer _drawingLayer;
 
     CPMutableArray _pixels;
+    int _previousIndex;
     int _currentIndex;
 
     var _attribute;
@@ -45,6 +46,7 @@ TOOL_PICKER = 2;
         // Drawing
         _pixels = [];
         _currentIndex = 0;
+        _previousIndex = nil;
 
         // Attribute
         _attribute = {color:ColorWellDefaultColor, thickness:ThicknessSelectorDefaultThickness, tool:TOOL_PENCIL};
@@ -89,6 +91,7 @@ TOOL_PICKER = 2;
         tool = nil,
         i = 0,
         wasBreak = true;
+    count = MIN(count, _currentIndex);
 
     CGContextBeginPath(aContext);
     CGContextSetStrokeColor(aContext, ColorWellDefaultColor);
@@ -160,6 +163,8 @@ TOOL_PICKER = 2;
 
 - (void)mouseDown:(CPEvent)anEvent
 {
+    if (_attribute.tool == TOOL_PENCIL || _attribute.tool == TOOL_ERASER)
+        _previousIndex = _currentIndex;
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
@@ -168,7 +173,15 @@ TOOL_PICKER = 2;
 
     if (_attribute.tool == TOOL_PENCIL || _attribute.tool == TOOL_ERASER)
     {
+        if (_previousIndex == _currentIndex && _previousIndex < [_pixels count])
+        {
+            // destory the redo stack if any.
+            var range = CPMakeRange(_previousIndex, [_pixels count] - _previousIndex);
+            [_pixels removeObjectsInRange:range];
+        }
+
         [_pixels push:{point:point, attribute:_attribute}];
+        _currentIndex++;
         [_drawingLayer setNeedsDisplay];
     }
 }
@@ -180,7 +193,10 @@ TOOL_PICKER = 2;
     if (_attribute.tool == TOOL_PENCIL || _attribute.tool == TOOL_ERASER)
     {
         [_pixels push:{point:point, attribute:_attribute, break:YES}];
+        _currentIndex++;
         [_drawingLayer setNeedsDisplay];
+
+        [self setCurrentIndex:{current:_currentIndex, previous:_previousIndex}];
     }
     else if (_attribute.tool == TOOL_PICKER)
     {
@@ -191,6 +207,14 @@ TOOL_PICKER = 2;
 
         [self setColor:color]; // Will notify color well.
     }
+}
+
+- (void)setCurrentIndex:(id)indexes
+{
+    [[[self window] undoManager] registerUndoWithTarget:self selector:@selector(setCurrentIndex:) object:{current:indexes.previous, previous:indexes.current}];
+
+    _currentIndex = indexes.current;
+    [_drawingLayer setNeedsDisplay];
 }
 
 - (void)colorWellDidChangeColor:(CPNotification)aNotification
