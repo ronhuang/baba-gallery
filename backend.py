@@ -191,22 +191,12 @@ class ViewAction(webapp.RequestHandler):
         else:
             self.response.out.write(artwork.thumbnail)
 
-class TestAction(webapp.RequestHandler):
-    def get(self):
-        template_values = {
-            'upload_url': blobstore.create_upload_url('/artworks'),
-        }
-
-        path = os.path.join(os.path.dirname(__file__), 'template', 'test.html')
-        self.response.out.write(template.render(path, template_values))
-
 # Boilerplate
 def main():
     actions = [
         ('/artwork/([0-9]+)/(image|thumbnail)$', ViewAction),
         ('/artwork/([0-9]+)$', ArtworkAction),
         ('/artworks', ArtworksAction),
-        ('/test', TestAction),
         ]
     application = webapp.WSGIApplication(actions, debug=True)
     run_wsgi_app(application)

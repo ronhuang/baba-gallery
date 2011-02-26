@@ -11,9 +11,6 @@ handlers:
 - url: /artwork/.*
   script: backend.py
 
-- url: /test
-  script: backend.py
-
 # Static
 - url: /
   static_files: public/index.html
