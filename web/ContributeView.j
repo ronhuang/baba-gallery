@@ -21,9 +21,16 @@ var TOOL_MARGIN = 15.0;
     ThicknessSelector _thicknessSelector;
     CanvasView _canvasView;
 
+    CPButton _pencilButton;
+    CPButton _eraserButton;
+    CPButton _pickerButton;
+    CPButton _currentButton;
+
     CPAlert _confirmAlert;
     CPPanel _submittingAlert;
     CPAlert _resultAlert;
+
+    CPString _tool;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -32,6 +39,7 @@ var TOOL_MARGIN = 15.0;
 
     if (self)
     {
+        /* UI components */
         var bounds = [self bounds];
 
         _toolView = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(bounds), TOOL_HEIGHT)];
@@ -40,17 +48,18 @@ var TOOL_MARGIN = 15.0;
         [self addSubview:_toolView];
 
         /* Action buttons. */
-        [self _addButtonWithTitle:@"New" imagePath:@"document-new.png" action:@selector(new) atIndex:0];
-        [self _addButtonWithTitle:@"Submit" imagePath:@"document-save-3.png" action:@selector(submit) atIndex:1];
-        [self _addButtonWithTitle:@"Undo" imagePath:@"edit-undo.png" action:@selector(undo) atIndex:2];
-        [self _addButtonWithTitle:@"Redo" imagePath:@"edit-redo.png" action:@selector(redo) atIndex:3];
-        [self _addButtonWithTitle:@"Zoom out" imagePath:@"zoom-out-3.png" action:@selector(zoomOut) atIndex:4];
-        [self _addButtonWithTitle:@"Zoom in" imagePath:@"zoom-in-3.png" action:@selector(zoomIn) atIndex:5];
-        [self _addButtonWithTitle:@"Pencil" imagePath:@"draw-brush.png" action:@selector(pencil) atIndex:6];
-        [self _addButtonWithTitle:@"Eraser" imagePath:@"draw-eraser-2.png" action:@selector(eraser) atIndex:7];
-        var x = [self _addButtonWithTitle:@"Picker" imagePath:@"color-picker.png" action:@selector(picker) atIndex:8];
+        [self _addButtonWithTitle:@"New" imagePath:@"document-new.png" action:@selector(new) atBase:0];
+        [self _addButtonWithTitle:@"Submit" imagePath:@"document-save-3.png" action:@selector(submit) atBase:1];
+
+        [self _addButtonWithTitle:@"Undo" imagePath:@"edit-undo.png" action:@selector(undo) atBase:2.25];
+        [self _addButtonWithTitle:@"Redo" imagePath:@"edit-redo.png" action:@selector(redo) atBase:3.25];
+
+        _pencilButton = [self _addButtonWithTitle:@"Pencil" imagePath:@"draw-brush.png" action:@selector(pencil) atBase:4.5];
+        _eraserButton = [self _addButtonWithTitle:@"Eraser" imagePath:@"draw-eraser-2.png" action:@selector(eraser) atBase:5.5];
+        _pickerButton = [self _addButtonWithTitle:@"Picker" imagePath:@"color-picker.png" action:@selector(picker) atBase:6.5];
 
         /* Brush thickness. */
+        var x = CGRectGetMaxX([_pickerButton frame]) + SEP_WIDTH + ICON_WIDTH * 0.25 + SEP_WIDTH;
         var frame = CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
         var thicknesses = [1, 2, 3, 4, 5];
         _thicknessSelector = [[ThicknessSelector alloc] initWithFrame:frame thicknesses:thicknesses];
@@ -59,7 +68,8 @@ var TOOL_MARGIN = 15.0;
         [_toolView addSubview:_thicknessSelector];
 
         /* Current color. */
-        var frame = CGRectMake(x + ICON_WIDTH + SEP_WIDTH, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
+        var x = CGRectGetMaxX([_thicknessSelector frame]) + SEP_WIDTH;
+        var frame = CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
         var well = [[ColorWell alloc] initWithFrame:frame];
         [well setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
         [well setTitle:@"Color"];
@@ -74,15 +84,20 @@ var TOOL_MARGIN = 15.0;
         [_canvasView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_canvasView setImage:image];
         [self addSubview:_canvasView];
+
+
+        /* Drawing logics */
+        [self addObserver:_canvasView forKeyPath:@"tool" options:CPKeyValueObservingOptionNew context:NULL];
+        [self setTool:@"pencil"];
     }
 
     return self;
 }
 
-- (CPButton)_addButtonWithTitle:(CPString)aTitle imagePath:(CPString)aImagePath action:(SEL)anAction atIndex:(int)anIndex
+- (CPButton)_addButtonWithTitle:(CPString)aTitle imagePath:(CPString)aImagePath action:(SEL)anAction atBase:(float)aBase
 {
     var mainBundle = [CPBundle mainBundle];
-    var x = anIndex * (ICON_WIDTH + SEP_WIDTH);
+    var x = aBase * (ICON_WIDTH + SEP_WIDTH);
 
     var btn = [[CPButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, ICON_HEIGHT + ICON_DESCRIPTION_HEIGHT)];
     [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
@@ -101,7 +116,52 @@ var TOOL_MARGIN = 15.0;
 
     [_toolView addSubview:btn];
 
-    return x + ICON_WIDTH + SEP_WIDTH;
+    //return x + ICON_WIDTH + SEP_WIDTH;
+    return btn;
+}
+
+- (void)setTool:(CPString)aTool
+{
+    if (_tool == aTool)
+        return;
+
+    _tool = aTool;
+
+    var dd = {pencil:_pencilButton, eraser:_eraserButton, picker:_pickerButton};
+    var btn = dd[aTool];
+    [self highlightButton:btn];
+}
+
+- (CPString)tool
+{
+    return _tool;
+}
+
+- (void)highlightButton:(CPButton)aButton
+{
+    if (_currentButton == aButton)
+        return;
+
+    var borderWidth = 2;
+
+    if (_currentButton)
+    {
+        // Remove box.
+        var box = [_currentButton superview];
+        var frame = [box frame];
+        var enclosingView = [box superview];
+
+        [enclosingView replaceSubview:box with:_currentButton];
+        [_currentButton setFrame:CGRectInset(frame, borderWidth / 2, borderWidth / 2)];
+    }
+
+    var box = [CPBox boxEnclosingView:aButton];
+    [box setBorderType:CPLineBorder];
+    [box setCornerRadius:10];
+    [box setBorderWidth:borderWidth];
+    [box setBorderColor:[CPColor darkGrayColor]];
+
+    _currentButton = aButton;
 }
 
 - (void)new
@@ -201,34 +261,19 @@ var TOOL_MARGIN = 15.0;
     CPLog.trace(@"redo");
 }
 
-- (void)zoomOut
-{
-    CPLog.trace(@"zoom out");
-}
-
-- (void)zoomIn
-{
-    CPLog.trace(@"zoom in");
-}
-
 - (void)pencil
 {
-    CPLog.trace(@"pencil");
+    [self setTool:@"pencil"];
 }
 
 - (void)eraser
 {
-    CPLog.trace(@"eraser");
+    [self setTool:@"eraser"];
 }
 
 - (void)picker
 {
-    CPLog.trace(@"picker");
-}
-
-- (void)color
-{
-    CPLog.trace(@"color");
+    [self setTool:@"picker"];
 }
 
 @end

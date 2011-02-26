@@ -13,7 +13,10 @@
     int _currentIndex;
 
     CPDictionary _attribute;
+    CPColor _color;
     int _thickness;
+
+    CPString _tool;
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -42,7 +45,9 @@
         _currentIndex = 0;
 
         // Attribute
-        _attribute = {color:ColorWellDefaultColor, thickness:ThicknessSelectorDefaultThickness};
+        _color = ColorWellDefaultColor;
+        _thickness = ThicknessSelectorDefaultThickness;
+        _attribute = {color:_color, thickness:_thickness};
 
         [[CPNotificationCenter defaultCenter]
             addObserver:self
@@ -54,6 +59,9 @@
                selector:@selector(thicknessSelectorDidChangeThickness:)
                    name:ThicknessSelectorThicknessDidChangeNotification
                  object:nil];
+
+        // Default tool
+        _tool = @"pencil";
     }
 
     return self;
@@ -164,14 +172,52 @@
 {
     var colorWell = [aNotification object];
 
-    _attribute = {color:[colorWell color], thickness:_attribute.thickness};
+    _color = [colorWell color];
+
+    _attribute = {color:_color, thickness:_thickness};
 }
 
 - (void)thicknessSelectorDidChangeThickness:(CPNotification)aNotification
 {
     var selector = [aNotification object];
 
-    _attribute = {color:_attribute.color, thickness:[selector thickness]};
+    _thickness = [selector thickness];
+
+    _attribute = {color:_color, thickness:_thickness};
+}
+
+- (void)setTool:(CPString)aTool
+{
+    if (_tool == aTool)
+        return;
+
+    _tool = aTool;
+
+    if (@"pencil" == _tool)
+    {
+    }
+    else if (@"eraser" == _tool)
+    {
+    }
+    else if (@"picker" == _tool)
+    {
+    }
+    else
+        CPLog.warning(@"Unknown tool: %@", _tool);
+}
+
+- (CPString)tool
+{
+    return _tool;
+}
+
+- (void)observeValueForKeyPath:(CPString)aKeyPath
+                      ofObject:(id)anObject
+                        change:(CPDictionary)aChange
+                       context:(id)aContext
+{
+    if (@"tool" == aKeyPath)
+        [self setTool:[aChange objectForKey:CPKeyValueChangeNewKey]];
 }
 
 @end
