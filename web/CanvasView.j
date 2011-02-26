@@ -4,6 +4,10 @@
 @import "ColorWell.j"
 @import "ThicknessSelector.j"
 
+TOOL_PENCIL = 0;
+TOOL_ERASER = 1;
+TOOL_PICKER = 2;
+
 @implementation CanvasView : CPView
 {
     ImageLayer _rootLayer;
@@ -12,11 +16,7 @@
     CPMutableArray _pixels;
     int _currentIndex;
 
-    CPDictionary _attribute;
-    CPColor _color;
-    int _thickness;
-
-    CPString _tool;
+    var _attribute;
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -45,9 +45,7 @@
         _currentIndex = 0;
 
         // Attribute
-        _color = ColorWellDefaultColor;
-        _thickness = ThicknessSelectorDefaultThickness;
-        _attribute = {color:_color, thickness:_thickness};
+        _attribute = {color:ColorWellDefaultColor, thickness:ThicknessSelectorDefaultThickness, tool:TOOL_PENCIL};
 
         [[CPNotificationCenter defaultCenter]
             addObserver:self
@@ -59,9 +57,6 @@
                selector:@selector(thicknessSelectorDidChangeThickness:)
                    name:ThicknessSelectorThicknessDidChangeNotification
                  object:nil];
-
-        // Default tool
-        _tool = @"pencil";
     }
 
     return self;
@@ -163,7 +158,7 @@
 {
     var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
 
-    [_pixels push:{point:point, attribute:_attribute, break:true}];
+    [_pixels push:{point:point, attribute:_attribute, break:YES}];
 
     [_drawingLayer setNeedsDisplay];
 }
@@ -172,43 +167,37 @@
 {
     var colorWell = [aNotification object];
 
-    _color = [colorWell color];
-
-    _attribute = {color:_color, thickness:_thickness};
+    _attribute = [self cloneAttribute];
+    _attribute.color = [colorWell color];
 }
 
 - (void)thicknessSelectorDidChangeThickness:(CPNotification)aNotification
 {
     var selector = [aNotification object];
 
-    _thickness = [selector thickness];
-
-    _attribute = {color:_color, thickness:_thickness};
+    _attribute = [self cloneAttribute];
+    _attribute.thickness = [selector thickness];
 }
 
 - (void)setTool:(CPString)aTool
 {
-    if (_tool == aTool)
-        return;
-
-    _tool = aTool;
-
-    if (@"pencil" == _tool)
+    if (@"pencil" == aTool)
     {
+        _attribute = [self cloneAttribute];
+        _attribute.tool = TOOL_PENCIL;
     }
-    else if (@"eraser" == _tool)
+    else if (@"eraser" == aTool)
     {
+        _attribute = [self cloneAttribute];
+        _attribute.tool = TOOL_ERASER;
     }
-    else if (@"picker" == _tool)
+    else if (@"picker" == aTool)
     {
+        _attribute = [self cloneAttribute];
+        _attribute.tool = TOOL_PICKER;
     }
     else
-        CPLog.warning(@"Unknown tool: %@", _tool);
-}
-
-- (CPString)tool
-{
-    return _tool;
+        CPLog.warning(@"Unknown tool: %@", aTool);
 }
 
 - (void)observeValueForKeyPath:(CPString)aKeyPath
@@ -218,6 +207,16 @@
 {
     if (@"tool" == aKeyPath)
         [self setTool:[aChange objectForKey:CPKeyValueChangeNewKey]];
+}
+
+- (id)cloneAttribute
+{
+    var tmp = {};
+
+    for (var key in _attribute)
+        tmp[key] = _attribute[key];
+
+    return tmp;
 }
 
 @end
