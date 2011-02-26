@@ -201,9 +201,9 @@ var TOOL_MARGIN = 15.0;
     if (![_canvasView dirty])
         return;
 
+    [_canvasView reset];
     [_undoButton setEnabled:NO];
     [_redoButton setEnabled:NO];
-    [_canvasView reset];
 }
 
 - (void)submit
