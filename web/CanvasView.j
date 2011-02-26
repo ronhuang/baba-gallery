@@ -4,6 +4,8 @@
 @import "ColorWell.j"
 @import "ThicknessSelector.j"
 
+CanvasViewCurrentIndexChangedNotification = @"CanvasViewCurrentIndexChangedNotification";
+
 TOOL_PENCIL = 0;
 TOOL_ERASER = 1;
 TOOL_PICKER = 2;
@@ -212,6 +214,10 @@ TOOL_PICKER = 2;
 - (void)setCurrentIndex:(id)indexes
 {
     [[[self window] undoManager] registerUndoWithTarget:self selector:@selector(setCurrentIndex:) object:{current:indexes.previous, previous:indexes.current}];
+
+    [[CPNotificationCenter defaultCenter]
+        postNotificationName:CanvasViewCurrentIndexChangedNotification
+                      object:self];
 
     _currentIndex = indexes.current;
     [_drawingLayer setNeedsDisplay];

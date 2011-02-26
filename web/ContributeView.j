@@ -21,6 +21,8 @@ var TOOL_MARGIN = 15.0;
     ThicknessSelector _thicknessSelector;
     CanvasView _canvasView;
 
+    CPButton _undoButton;
+    CPButton _redoButton;
     CPButton _pencilButton;
     CPButton _eraserButton;
     CPButton _pickerButton;
@@ -51,8 +53,8 @@ var TOOL_MARGIN = 15.0;
         [self _addButtonWithTitle:@"New" imagePath:@"document-new.png" action:@selector(new) atBase:0];
         [self _addButtonWithTitle:@"Submit" imagePath:@"document-save-3.png" action:@selector(submit) atBase:1];
 
-        [self _addButtonWithTitle:@"Undo" imagePath:@"edit-undo.png" action:@selector(undo) atBase:2.25];
-        [self _addButtonWithTitle:@"Redo" imagePath:@"edit-redo.png" action:@selector(redo) atBase:3.25];
+        _undoButton = [self _addButtonWithTitle:@"Undo" imagePath:@"edit-undo.png" action:@selector(undo) atBase:2.25];
+        _redoButton = [self _addButtonWithTitle:@"Redo" imagePath:@"edit-redo.png" action:@selector(redo) atBase:3.25];
 
         _pencilButton = [self _addButtonWithTitle:@"Pencil" imagePath:@"draw-brush.png" action:@selector(pencil) atBase:4.5];
         _eraserButton = [self _addButtonWithTitle:@"Eraser" imagePath:@"draw-eraser-2.png" action:@selector(eraser) atBase:5.5];
@@ -90,6 +92,24 @@ var TOOL_MARGIN = 15.0;
         [self addObserver:_canvasView forKeyPath:@"tool" options:CPKeyValueObservingOptionNew context:NULL];
         [_canvasView addObserver:well forKeyPath:@"color" options:CPKeyValueObservingOptionNew context:NULL];
         [self setTool:@"pencil"];
+
+        [[CPNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(updateUndoOrRedoButtons:)
+                   name:CPUndoManagerDidUndoChangeNotification
+                 object:nil];
+        [[CPNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(updateUndoOrRedoButtons:)
+                   name:CPUndoManagerDidRedoChangeNotification
+                 object:nil];
+        [[CPNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(updateUndoOrRedoButtons:)
+                   name:CanvasViewCurrentIndexChangedNotification
+                 object:nil];
+        [_undoButton setEnabled:NO];
+        [_redoButton setEnabled:NO];
     }
 
     return self;
@@ -104,6 +124,7 @@ var TOOL_MARGIN = 15.0;
     [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
     [btn setImagePosition:CPImageAbove];
     [btn setBordered:NO];
+    [btn setImageDimsWhenDisabled:YES];
 
     [btn setTitle:aTitle];
 
@@ -274,6 +295,14 @@ var TOOL_MARGIN = 15.0;
 - (void)picker
 {
     [self setTool:@"picker"];
+}
+
+- (void)updateUndoOrRedoButtons:(CPNotification)aNotification
+{
+    var manager = [[self window] undoManager];
+
+    [_redoButton setEnabled:[manager canRedo]];
+    [_undoButton setEnabled:[manager canUndo]];
 }
 
 @end
