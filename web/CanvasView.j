@@ -42,12 +42,17 @@
         _currentIndex = 0;
 
         // Attribute
-        _attribute = {color:ColorWellDefaultColor, thickness:1};
+        _attribute = {color:ColorWellDefaultColor, thickness:ThicknessSelectorDefaultThickness};
 
         [[CPNotificationCenter defaultCenter]
             addObserver:self
                selector:@selector(colorWellDidChangeColor:)
                    name:ColorWellColorDidChangeNotification
+                 object:nil];
+        [[CPNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(thicknessSelectorDidChangeThickness:)
+                   name:ThicknessSelectorThicknessDidChangeNotification
                  object:nil];
     }
 
@@ -68,6 +73,8 @@
 
     CGContextSaveGState(aContext);
     CGContextTranslateCTM(aContext, CGRectGetMinX([aLayer bounds]), 0.0);
+    CGContextSetLineCap(aContext, 1);
+    CGContextSetLineJoin(aContext, 1);
 
 
     var pixel = nil,
@@ -79,6 +86,7 @@
 
     CGContextBeginPath(aContext);
     CGContextSetStrokeColor(aContext, ColorWellDefaultColor);
+    CGContextSetLineWidth(aContext, ThicknessSelectorDefaultThickness);
 
     do
     {
@@ -93,6 +101,7 @@
 
             CGContextBeginPath(aContext);
             CGContextSetStrokeColor(aContext, color);
+            CGContextSetLineWidth(aContext, thickness);
             CGContextMoveToPoint(aContext, point.x, point.y);
         }
 
@@ -155,7 +164,14 @@
 {
     var colorWell = [aNotification object];
 
-    _attribute = {color:[colorWell color], thickness:1};
+    _attribute = {color:[colorWell color], thickness:_attribute.thickness};
+}
+
+- (void)thicknessSelectorDidChangeThickness:(CPNotification)aNotification
+{
+    var selector = [aNotification object];
+
+    _attribute = {color:_attribute.color, thickness:[selector thickness]};
 }
 
 @end

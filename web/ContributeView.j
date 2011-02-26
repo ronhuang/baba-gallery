@@ -56,8 +56,6 @@ var TOOL_MARGIN = 15.0;
         _thicknessSelector = [[ThicknessSelector alloc] initWithFrame:frame thicknesses:thicknesses];
         [_thicknessSelector setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
         [_thicknessSelector setTitle:@"Size"];
-        [_thicknessSelector setTarget:self];
-        [_thicknessSelector setAction:@selector(thickness)];
         [_toolView addSubview:_thicknessSelector];
 
         /* Current color. */
@@ -226,11 +224,6 @@ var TOOL_MARGIN = 15.0;
 - (void)picker
 {
     CPLog.trace(@"picker");
-}
-
-- (void)thickness
-{
-    CPLog.trace(@"thickness");
 }
 
 - (void)color

@@ -1,5 +1,8 @@
 @import <AppKit/CPButton.j>
 
+ThicknessSelectorThicknessDidChangeNotification = @"ThicknessSelectorThicknessDidChangeNotification";
+ThicknessSelectorDefaultThickness = 1;
+
 var LABEL_HEIGHT = 26.0;
 var OFFSET_HEIGHT = 3.0;
 
@@ -9,6 +12,7 @@ var OFFSET_HEIGHT = 3.0;
     id _target;
     SEL _action;
     CPTextField _label;
+    ThicknessGroup _group;
 }
 
 - (id)initWithFrame:(CGRect)aFrame thicknesses:(CPArray)anArray
@@ -24,12 +28,14 @@ var OFFSET_HEIGHT = 3.0;
         var h = (CGRectGetHeight(aFrame) - OFFSET_HEIGHT - LABEL_HEIGHT) / count;
 
         // Add thickness buttons.
-        var tg = [ThicknessGroup new];
+        _group = [ThicknessGroup new];
         for (var i = 0; i < count; i++)
         {
-            var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(0, h * i, w, h) thicknessGroup:tg];
+            var btn = [[ThicknessButton alloc] initWithFrame:CGRectMake(0, h * i, w, h) thicknessGroup:_group];
             [btn setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
             [btn setThickness:anArray[i]];
+            [btn setTarget:self];
+            [btn setAction:@selector(buttonDidClick)];
             [self addSubview:btn];
 
             [_buttons insertObject:btn atIndex:[_buttons count]];
@@ -62,32 +68,16 @@ var OFFSET_HEIGHT = 3.0;
     return [_label stringValue];
 }
 
-- (void)setAction:(SEL)anAction
+- (void)buttonDidClick
 {
-    _action = anAction;
-    for (var i = [_buttons count]; i >= 0; i--)
-    {
-        [_buttons[i] setAction:anAction];
-    }
+    [[CPNotificationCenter defaultCenter]
+        postNotificationName:ThicknessSelectorThicknessDidChangeNotification
+                      object:self];
 }
 
-- (SEL)action
+- (int)thickness
 {
-    return _action;
-}
-
-- (void)setTarget:(id)aTarget
-{
-    _target = aTarget;
-    for (var i = [_buttons count]; i >= 0; i--)
-    {
-        [_buttons[i] setTarget:aTarget];
-    }
-}
-
-- (id)target
-{
-    return _target;
+    return [[_group selectedThicknessButton] thickness];
 }
 
 @end
