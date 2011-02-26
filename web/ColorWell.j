@@ -1,5 +1,8 @@
 @import <AppKit/CPColorWell.j>
 
+ColorWellColorDidChangeNotification = @"ColorWellColorDidChangeNotification";
+ColorWellDefaultColor = [CPColor yellowColor];
+
 var LABEL_HEIGHT = 26.0;
 var OFFSET_HEIGHT = 3.0;
 
@@ -18,6 +21,7 @@ var OFFSET_HEIGHT = 3.0;
         var w = CGRectGetWidth(aFrame);
 
         [self setBordered:NO];
+        [self setColor:ColorWellDefaultColor];
 
         // Add Label.
         _label = [[CPTextField alloc] initWithFrame:CGRectMake(0, CGRectGetHeight(aFrame) - LABEL_HEIGHT, w, LABEL_HEIGHT)];
@@ -73,6 +77,10 @@ var OFFSET_HEIGHT = 3.0;
         return;
 
     _color = aColor;
+
+    [[CPNotificationCenter defaultCenter]
+        postNotificationName:ColorWellColorDidChangeNotification
+                      object:self];
 
     [self drawWellInside:nil];
 }

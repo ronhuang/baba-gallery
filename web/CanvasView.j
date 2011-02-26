@@ -1,15 +1,19 @@
 @import <AppKit/CPView.j>
 @import "ImageLayer.j"
 @import "CPMutableArray+Queue.j"
+@import "ColorWell.j"
+@import "ThicknessSelector.j"
 
 @implementation CanvasView : CPView
 {
     ImageLayer _rootLayer;
     CALayer _drawingLayer;
 
-    CPMutableArray _drawPoints;
-    CPMutableArray _allPoints;
+    CPMutableArray _pixels;
     int _currentIndex;
+
+    CPDictionary _attribute;
+    int _thickness;
 }
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -34,9 +38,17 @@
         [_rootLayer setNeedsDisplay];
 
         // Drawing
-        _drawPoints = [];
-        _allPoints = [];
+        _pixels = [];
         _currentIndex = 0;
+
+        // Attribute
+        _attribute = {color:ColorWellDefaultColor, thickness:1};
+
+        [[CPNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(colorWellDidChangeColor:)
+                   name:ColorWellColorDidChangeNotification
+                 object:nil];
     }
 
     return self;
@@ -49,43 +61,47 @@
 
 - (void)drawLayer:(CALayer)aLayer inContext:(CGContext)aContext
 {
+    var count = [_pixels count];
+
+    if (count <= 0)
+        return;
+
     CGContextSaveGState(aContext);
     CGContextTranslateCTM(aContext, CGRectGetMinX([aLayer bounds]), 0.0);
 
 
-    // FIXME: use correct color
-    CGContextSetStrokeColor(aContext, [CPColor redColor]);
-
+    var pixel = nil,
+        point = nil,
+        color = nil,
+        thickness = nil,
+        i = 0,
+        wasBreak = true;
 
     CGContextBeginPath(aContext);
+    CGContextSetStrokeColor(aContext, ColorWellDefaultColor);
 
-    var point = nil;
-    if ([_allPoints count] > 0)
+    do
     {
-        point = [_allPoints objectAtIndex:0];
-        CGContextMoveToPoint(aContext, point.x, point.y);
-    }
+        pixel = [_pixels objectAtIndex:i];
+        point = pixel.point;
+        color = pixel.attribute.color;
+        thickness = pixel.attribute.thickness;
 
-    for (i = 0; i < [_allPoints count]; i++)
-    {
-        point = [_allPoints objectAtIndex:i];
+        if (wasBreak)
+        {
+            CGContextStrokePath(aContext);
+
+            CGContextBeginPath(aContext);
+            CGContextSetStrokeColor(aContext, color);
+            CGContextMoveToPoint(aContext, point.x, point.y);
+        }
+
         CGContextAddLineToPoint(aContext, point.x, point.y);
+
+        wasBreak = pixel.break;
+        i++;
     }
-
-
-    /*
-    var point = [_drawPoints pop];
-    if (point)
-        CGContextMoveToPoint(aContext, point.x, point.y);
-
-    while (point)
-    {
-        CGContextAddLineToPoint(aContext, point.x, point.y);
-        CGContextStrokeRect(aContext, CGRectMake(point.x, point.y, 1.0, 1.0));
-
-        point = [_drawPoints pop];
-    }
-    */
+    while (i < count);
 
     CGContextStrokePath(aContext);
 
@@ -115,15 +131,13 @@
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-    var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
 {
     var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
 
-    [_drawPoints push:point];
-    [_allPoints push:point];
+    [_pixels push:{point:point, attribute:_attribute}];
 
     [_drawingLayer setNeedsDisplay];
 }
@@ -132,10 +146,16 @@
 {
     var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
 
-    [_drawPoints push:point];
-    [_allPoints push:point];
+    [_pixels push:{point:point, attribute:_attribute, break:true}];
 
     [_drawingLayer setNeedsDisplay];
+}
+
+- (void)colorWellDidChangeColor:(CPNotification)aNotification
+{
+    var colorWell = [aNotification object];
+
+    _attribute = {color:[colorWell color], thickness:1};
 }
 
 @end
