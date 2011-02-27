@@ -5,7 +5,6 @@
 
 var MARGIN_WIDTH = 15.0;
 var MARGIN_HEIGHT = 15.0;
-var NAME_HEIGHT = 24.0;
 var VOTE_HEIGHT = 24.0;
 
 @implementation ArtworkView : CPView
@@ -14,7 +13,6 @@ var VOTE_HEIGHT = 24.0;
     CPBox _boxView;
 
     CPImageView _imageView;
-    CPTextField _nameTextView;
     CPTextField _voteTextView;
     CPButton _voteButtonView;
 
@@ -35,23 +33,13 @@ var VOTE_HEIGHT = 24.0;
     if (!_imageView)
     {
         var w = CGRectGetWidth(bounds) - MARGIN_WIDTH * 2;
-        var h = CGRectGetHeight(bounds) - MARGIN_HEIGHT * 2 - NAME_HEIGHT - VOTE_HEIGHT;
+        var h = CGRectGetHeight(bounds) - MARGIN_HEIGHT * 2 - MARGIN_HEIGHT - VOTE_HEIGHT;
         _imageView = [[CPImageView alloc] initWithFrame:CGRectMake(MARGIN_WIDTH, MARGIN_HEIGHT, w, h)];
         [_imageView setImageScaling:CPScaleProportionally];
         [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_bgView addSubview:_imageView];
     }
     [_imageView setImage:[[CPImage alloc] initWithContentsOfFile:_artwork["thumbnail_url"]]];
-
-    if (!_nameTextView)
-    {
-        var y = CGRectGetHeight(bounds) - MARGIN_HEIGHT - VOTE_HEIGHT - NAME_HEIGHT;
-        _nameTextView = [[CPTextField alloc] initWithFrame:CGRectMake(MARGIN_WIDTH, y, CGRectGetWidth(bounds), NAME_HEIGHT)];
-        [_nameTextView setFont:[CPFont systemFontOfSize:16.0]];
-        [_bgView addSubview:_nameTextView];
-    }
-    [_nameTextView setStringValue:[CPString stringWithFormat:@"Artist: %s", _artwork["name"]]];
-    [_nameTextView sizeToFit];
 
     if (!_voteButtonView)
     {
