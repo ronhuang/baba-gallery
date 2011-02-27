@@ -7,7 +7,7 @@ var GRID_SIZE = 240.0;
 var TOOL_HEIGHT = 30.0;
 var TOOL_MARGIN = 24.0;
 var SEP_WIDTH = 10.0;
-var SORT_TITLES = ["Date ▼", "Date ▲", "Votes ▼", "Votes ▲"];
+var SORT_TITLES = ["Date ▼", "Date ▲", "Votes ▼", "Votes ▲", "Views ▼", "Views ▲"];
 
 @implementation GalleryView : CPView
 {

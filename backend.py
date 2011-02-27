@@ -78,6 +78,10 @@ class ArtworksAction(webapp.RequestHandler):
             artworks.order('-vote_count')
         elif sort_by == "3":
             artworks.order('vote_count')
+        elif sort_by == "4":
+            artworks.order('-view_count')
+        elif sort_by == "5":
+            artworks.order('view_count')
         else:
             artworks.order('-created_at')
 
