@@ -10,9 +10,15 @@ from google.appengine.ext.webapp import template
 import logging
 
 # Utility
-def increment_counter(key, amount):
+def increment_vote(key, amount):
     obj = db.get(key)
     obj.vote_count += amount
+    obj.put()
+    return obj
+
+def increment_view(key, amount):
+    obj = db.get(key)
+    obj.view_count += amount
     obj.put()
     return obj
 
@@ -26,6 +32,11 @@ class Artwork(db.Model):
     vote_count = db.IntegerProperty(default=0)
     image = db.BlobProperty()
     thumbnail = db.BlobProperty()
+
+    @dbx.DerivedProperty
+    def id(self):
+        if self.is_saved():
+            return self.key().id_or_name()
 
     @dbx.DerivedProperty
     def url(self):
@@ -140,6 +151,8 @@ class ArtworkAction(webapp.RequestHandler):
             self.error(404)
             return
 
+        artwork = db.run_in_transaction(increment_view, artwork.key(), 1)
+
         jj = json.dumps({
             'status': 200,
             'count': 1,
@@ -157,7 +170,7 @@ class ArtworkAction(webapp.RequestHandler):
             self.error(404)
             return
 
-        artwork = db.run_in_transaction(increment_counter, artwork.key(), 1)
+        artwork = db.run_in_transaction(increment_vote, artwork.key(), 1)
 
         jj = json.dumps({
             'status': 200,

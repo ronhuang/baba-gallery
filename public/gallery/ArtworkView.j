@@ -2,6 +2,7 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPBox.j>
+@import "DetailDialog.j"
 
 var MARGIN_WIDTH = 15.0;
 var MARGIN_HEIGHT = 15.0;
@@ -17,6 +18,9 @@ var VOTE_HEIGHT = 24.0;
     CPButton _voteButtonView;
 
     id _artwork;
+
+    CPURLConnection _voteConn;
+    CPURLConnection _viewConn;
 }
 
 - (void)setRepresentedObject:(id)anObject
@@ -32,9 +36,12 @@ var VOTE_HEIGHT = 24.0;
 
     if (!_imageView)
     {
-        var w = CGRectGetWidth(bounds) - MARGIN_WIDTH * 2;
-        var h = CGRectGetHeight(bounds) - MARGIN_HEIGHT * 2 - MARGIN_HEIGHT - VOTE_HEIGHT;
-        _imageView = [[CPImageView alloc] initWithFrame:CGRectMake(MARGIN_WIDTH, MARGIN_HEIGHT, w, h)];
+        var w = CGRectGetWidth(bounds);
+        var h = CGRectGetHeight(bounds);
+        var size = MIN(w - MARGIN_WIDTH * 2, h - MARGIN_HEIGHT * 2 - MARGIN_HEIGHT - VOTE_HEIGHT);
+        var x = (w - MARGIN_WIDTH * 2 - size) / 2.0;
+        var y = (h - MARGIN_HEIGHT * 2 - MARGIN_HEIGHT - VOTE_HEIGHT - size) / 2.0;
+        _imageView = [[CPImageView alloc] initWithFrame:CGRectMake(MARGIN_WIDTH + x, MARGIN_HEIGHT + y, size, size)];
         [_imageView setImageScaling:CPScaleProportionally];
         [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_bgView addSubview:_imageView];
@@ -80,33 +87,54 @@ var VOTE_HEIGHT = 24.0;
 
 - (void)vote
 {
-    if (!_artwork)
-    {
+    if (!_artwork || _voteConn)
         return;
-    }
 
     [_voteButtonView setEnabled:NO];
 
     var req = [CPURLRequest requestWithURL:_artwork["url"]];
     [req setHTTPMethod:@"PUT"];
-    connection = [CPURLConnection connectionWithRequest:req delegate:self];
+    _voteConn = [CPURLConnection connectionWithRequest:req delegate:self];
 }
 
-- (void)connection:(CPURLConnection) connection didReceiveData:(CPString)data
+- (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
-    var jsObject = [data objectFromJSON];
-    _artwork = jsObject["content"][0];
+    if (_voteConn == connection)
+    {
+        var jsObject = [data objectFromJSON];
+        _artwork = jsObject["content"][0];
 
-    var votes = _artwork["vote_count"];
-    [_voteTextView setStringValue:[self _formatVotes:votes]];
-    [_voteButtonView setEnabled:YES];
+        var votes = _artwork["vote_count"];
+        [_voteTextView setStringValue:[self _formatVotes:votes]];
+        [_voteButtonView setEnabled:YES];
+
+        _voteConn = nil;
+    }
+    else if (_viewConn == connection)
+    {
+        var jsObject = [data objectFromJSON];
+        _artwork = jsObject["content"][0];
+
+        var frame = CGRectInset([[self window] frame], 30.0, 30.0);
+        var dlg = [[DetailDialog alloc] initWithFrame:frame artwork:_artwork];
+        [dlg runModal];
+
+        _viewConn = nil;
+    }
 }
 
 - (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
 {
     // TODO: show failed message.
-
-    [_voteButtonView setEnabled:YES];
+    if (_voteConn == connection)
+    {
+        [_voteButtonView setEnabled:YES];
+        _voteConn = nil;
+    }
+    else if (_viewConn == connection)
+    {
+        _viewConn = nil;
+    }
 }
 
 - (CPString)_formatVotes:(int)votes
@@ -117,6 +145,24 @@ var VOTE_HEIGHT = 24.0;
     else
         voteStr = [CPString stringWithFormat:@"%d people liked this", votes];
     return voteStr;
+}
+
+- (void)view
+{
+    if (!_artwork || _viewConn)
+        return;
+
+    // Retrieve latest information
+    var req = [CPURLRequest requestWithURL:_artwork["url"]];
+    [req setHTTPMethod:@"GET"];
+    _viewConn = [CPURLConnection connectionWithRequest:req delegate:self];
+}
+
+- (void)mouseDown:(CPEvent)anEvent
+{
+    var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
+    if ([_imageView hitTest:point])
+        [self view];
 }
 
 @end
