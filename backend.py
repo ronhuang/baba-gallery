@@ -57,7 +57,18 @@ class ArtworksAction(webapp.RequestHandler):
         Just get all artworks and return as JSON.
         """
         artworks = Artwork.all()
-        artworks.order('-created_at')
+
+        sort_by = self.request.get("sort_by", "0")
+        if sort_by == "0":
+            artworks.order('-created_at')
+        elif sort_by == "1":
+            artworks.order('created_at')
+        elif sort_by == "2":
+            artworks.order('-vote_count')
+        elif sort_by == "3":
+            artworks.order('vote_count')
+        else:
+            artworks.order('-created_at')
 
         jj = json.dumps({
             'status': 200,

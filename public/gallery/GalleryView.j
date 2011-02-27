@@ -4,11 +4,18 @@
 @import "ArtworkView.j"
 
 var GRID_SIZE = 240.0;
+var TOOL_HEIGHT = 30.0;
+var TOOL_MARGIN = 24.0;
+var SEP_WIDTH = 10.0;
+var SORT_TITLES = ["Date ▼", "Date ▲", "Votes ▼", "Votes ▲"];
 
 @implementation GalleryView : CPView
 {
     CPCollectionView _artworksView;
     CPURLConnection _conn;
+
+    CPPopUpButton _menu;
+    int _sortBy;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -31,13 +38,35 @@ var GRID_SIZE = 240.0;
         [itemPrototype setView:aView];
         [_artworksView setItemPrototype:itemPrototype];
 
-        var scrollView = [[CPScrollView alloc] initWithFrame:CGRectMake(0.0, 0.0, w, h)];
+        var scrollView = [[CPScrollView alloc] initWithFrame:CGRectMake(0.0, TOOL_HEIGHT, w, h)];
         [scrollView setDocumentView:_artworksView];
         [scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [scrollView setAutohidesScrollers:YES];
-
         [self addSubview:scrollView];
 
+        /* Tool */
+        var w = 100.0;
+        var refreshBtn = [CPButton buttonWithTitle:@"Refresh"];
+        [refreshBtn setFrame:CGRectMake(CGRectGetWidth(bounds) - TOOL_MARGIN - w - SEP_WIDTH - w, 0.0, w, 24.0)];
+        [refreshBtn setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
+        [refreshBtn setTarget:self];
+        [refreshBtn setAction:@selector(fetchData)];
+        [self addSubview:refreshBtn];
+
+        _sortBy = 0;
+        _menu = [[CPPopUpButton alloc] initWithFrame:CGRectMake(CGRectGetWidth(bounds) - TOOL_MARGIN - w, 0.0, w, 24.0) pullsDown:NO];
+        [_menu setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
+        for (var i = 0; i < [SORT_TITLES count]; i++)
+        {
+            var item = [[CPMenuItem alloc] initWithTitle:SORT_TITLES[i] action:@selector(itemSelected) keyEquivalent:nil];
+            [item setTarget:self];
+            [item setTag:i];
+            [_menu addItem:item];
+        }
+        [_menu setTitle:@"Sort by"];
+        [self addSubview:_menu];
+
+        /* Should I fetch data this early? */
         [self fetchData];
     }
 
@@ -49,8 +78,7 @@ var GRID_SIZE = 240.0;
     var jsObject = [jsonString objectFromJSON],
         content = jsObject["content"];
 
-    if ([_artworksView items].length != content.length)
-        [_artworksView setContent:content];
+    [_artworksView setContent:content];
 }
 
 - (void)fetchData
@@ -58,7 +86,8 @@ var GRID_SIZE = 240.0;
     if (_conn)
         return;
 
-    var req = [CPURLRequest requestWithURL:@"/artworks"];
+    var url = [CPString stringWithFormat:@"/artworks?sort_by=%d", _sortBy];
+    var req = [CPURLRequest requestWithURL:url];
     _conn = [CPURLConnection connectionWithRequest:req delegate:self];
 }
 
@@ -72,6 +101,19 @@ var GRID_SIZE = 240.0;
 {
     // TODO: show failed message.
     _conn = nil;
+}
+
+- (void)itemSelected
+{
+    var item = [_menu selectedItem];
+    var idx = [item tag];
+
+    if (_sortBy == idx)
+        return;
+
+    _sortBy = idx;
+
+    [self fetchData];
 }
 
 @end
