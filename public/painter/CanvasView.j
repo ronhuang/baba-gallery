@@ -36,6 +36,7 @@ TOOL_PICKER = 2;
         [self setLayer:_rootLayer];
 
         _drawingLayer = [CALayer layer];
+        [_drawingLayer setBounds:CGRectMake(0.0, 0.0, CGRectGetWidth(aFrame), CGRectGetHeight(aFrame))];
         [_drawingLayer setDelegate:self];
         [_drawingLayer setAnchorPoint:CGPointMakeZero()];
 
