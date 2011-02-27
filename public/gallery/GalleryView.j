@@ -38,7 +38,7 @@ var SORT_TITLES = ["Date ▼", "Date ▲", "Votes ▼", "Votes ▲"];
         [itemPrototype setView:aView];
         [_artworksView setItemPrototype:itemPrototype];
 
-        var scrollView = [[CPScrollView alloc] initWithFrame:CGRectMake(0.0, TOOL_HEIGHT, w, h)];
+        var scrollView = [[CPScrollView alloc] initWithFrame:CGRectMake(0.0, TOOL_HEIGHT, w, h - TOOL_MARGIN)];
         [scrollView setDocumentView:_artworksView];
         [scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [scrollView setAutohidesScrollers:YES];
