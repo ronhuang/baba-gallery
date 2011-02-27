@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+    <title>Painter &mdash; Baba Painter</title>
+    <meta name="description" content="Baba Painter is a serious interactive art installation" />
+    <meta name="keywords" content="Baba Painter, NM5211 Serious Games & Learning Media, Baba House, NUS, Communications and New Media, CNM, Random Blends" />
+    <meta name="author" content="Ron Huang" />
+    <link rel="stylesheet" href="css/screen.css" media="screen" />
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
+    <script src="js/site.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(function() {
+        var f = document.getElementById('capp')
+        f.style.height = (self.innerHeight - 93) + "px";
+      });
+      $(window).resize(function() {
+        var f = document.getElementById('capp')
+        f.style.height = (self.innerHeight - 93) + "px";
+      });
+    </script>
+</head>
+<body class="journal">
+<div id="wrapper">
+<div id="inner_wrapper">
+    <div id="container">
+        <header id="title">
+            <h1><a href="/">Baba Painter</a></h1>
+        </header>
+        <nav id="main_nav">
+            <ul>
+                <li><a href="/" class="projects">home</a></li>
+                <li><a href="/gallery" class="about">gallery</a></li>
+                <li><a href="/painter" class="journal">contribute</a></li>
+            </ul>
+        </nav>
+        <div id="content">
+          <iframe frameborder="0" border="0" src="/painter/app.html" width="100%" id="capp">
+            <p>Your browser doesn't support iframe.</p>
+          </iframe>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>

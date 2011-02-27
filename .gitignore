@@ -1,3 +1,4 @@
 *.pyc
 .DS_Store
-public/Frameworks
+public/gallery/Frameworks
+public/painter/Frameworks

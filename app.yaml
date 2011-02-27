@@ -16,6 +16,14 @@ handlers:
   static_files: public/index.html
   upload: public/index.html
 
+- url: /gallery
+  static_files: public/gallery/index.html
+  upload: public/gallery/index.html
+
+- url: /painter
+  static_files: public/painter/index.html
+  upload: public/painter/index.html
+
 - url: /(.*)
   static_files: public/\1
   upload: public/(.*)

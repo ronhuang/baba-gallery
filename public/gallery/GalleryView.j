@@ -45,6 +45,8 @@ var GRID_SIZE = 240.0;
         [scrollView setAutohidesScrollers:YES];
 
         [self addSubview:scrollView];
+
+        [self fetchData];
     }
 
     return self;
