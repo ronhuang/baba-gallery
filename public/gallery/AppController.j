@@ -9,8 +9,6 @@
 @import <Foundation/CPObject.j>
 @import "GalleryView.j"
 
-TAB_MARGIN = 15.0;
-
 @implementation AppController : CPObject
 {
 }
