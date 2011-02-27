@@ -88,7 +88,9 @@ var TOOL_MARGIN = 10.0;
         var path = [mainBundle pathForResource:@"original.jpg"];
         var image = [[CPImage alloc] initWithContentsOfFile:path];
 
-        _canvasView = [[CanvasView alloc] initWithFrame:CGRectMake(0.0, TOOL_HEIGHT, CGRectGetWidth(bounds), CGRectGetHeight(bounds) - TOOL_HEIGHT)];
+        var size = MIN(CGRectGetWidth(bounds), CGRectGetHeight(bounds) - TOOL_HEIGHT);
+        var x = (CGRectGetWidth(bounds) - size) / 2.0;
+        _canvasView = [[CanvasView alloc] initWithFrame:CGRectMake(x, TOOL_HEIGHT, size, size)];
         [_canvasView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_canvasView setImage:image];
         [self addSubview:_canvasView];
