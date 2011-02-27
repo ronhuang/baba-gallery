@@ -13,7 +13,6 @@ var ICON_HEIGHT = 64.0;
 var ICON_DESCRIPTION_HEIGHT = 24.0;
 var TOOL_HEIGHT = 110.0;
 var TOOL_HEIGHT_2 = TOOL_HEIGHT / 2.0;
-var TOOL_MARGIN = 15.0;
 
 @implementation ContributeView : CPView
 {
@@ -46,7 +45,7 @@ var TOOL_MARGIN = 15.0;
         var bounds = [self bounds];
 
         _toolView = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(bounds), TOOL_HEIGHT)];
-        [_toolView setBackgroundColor:[CPColor lightGrayColor]];
+        [_toolView setBackgroundColor:[CPColor colorWithWhite:0.9 alpha:1.0]];
         [_toolView setAutoresizingMask:CPViewWidthSizable | CPViewMaxYMargin];
         [self addSubview:_toolView];
 
@@ -63,7 +62,7 @@ var TOOL_MARGIN = 15.0;
 
         /* Brush thickness. */
         var x = CGRectGetMaxX([_pickerButton frame]) + SEP_WIDTH + ICON_WIDTH * 0.25 + SEP_WIDTH;
-        var frame = CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
+        var frame = CGRectMake(x, TAB_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TAB_MARGIN);
         var thicknesses = [1, 2, 3, 4, 5];
         _thicknessSelector = [[ThicknessSelector alloc] initWithFrame:frame thicknesses:thicknesses];
         [_thicknessSelector setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
@@ -72,7 +71,7 @@ var TOOL_MARGIN = 15.0;
 
         /* Current color. */
         var x = CGRectGetMaxX([_thicknessSelector frame]) + SEP_WIDTH;
-        var frame = CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TOOL_MARGIN);
+        var frame = CGRectMake(x, TAB_MARGIN, ICON_WIDTH, TOOL_HEIGHT - TAB_MARGIN);
         var well = [[ColorWell alloc] initWithFrame:frame];
         [well setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
         [well setTitle:@"Color"];
@@ -121,7 +120,7 @@ var TOOL_MARGIN = 15.0;
     var mainBundle = [CPBundle mainBundle];
     var x = aBase * (ICON_WIDTH + SEP_WIDTH);
 
-    var btn = [[CPButton alloc] initWithFrame:CGRectMake(x, TOOL_MARGIN, ICON_WIDTH, ICON_HEIGHT + ICON_DESCRIPTION_HEIGHT)];
+    var btn = [[CPButton alloc] initWithFrame:CGRectMake(x, TAB_MARGIN, ICON_WIDTH, ICON_HEIGHT + ICON_DESCRIPTION_HEIGHT)];
     [btn setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
     [btn setImagePosition:CPImageAbove];
     [btn setBordered:NO];

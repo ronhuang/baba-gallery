@@ -8,8 +8,11 @@
 
 @import <Foundation/CPObject.j>
 @import <AppKit/CPWebView.j>
+@import "HomeView.j"
 @import "GalleryView.j"
 @import "ContributeView.j"
+
+TAB_MARGIN = 15.0;
 
 @implementation AppController : CPObject
 {
@@ -30,9 +33,7 @@
 
     var homeItem = [[CPTabViewItem alloc] initWithIdentifier:@"home"];
     [homeItem setLabel:@"Home"];
-    var homeView = [[CPWebView alloc] initWithFrame:CPRectMakeZero()];
-    var mainBundle = [CPBundle mainBundle];
-    [homeView setMainFrameURL:[mainBundle pathForResource:@"home.html"]];
+    var homeView = [[HomeView alloc] initWithFrame:CPRectMakeZero()];
     [homeItem setView:homeView];
     [tabView addTabViewItem:homeItem];
 
@@ -51,7 +52,7 @@
     [contentView addSubview:tabView];
 
     /* Test */
-    [tabView selectTabViewItemAtIndex:2];
+    [tabView selectTabViewItemAtIndex:0];
     CPLogRegister(CPLogConsole);
 
     [theWindow orderFront:self];
