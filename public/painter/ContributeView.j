@@ -14,6 +14,7 @@ var ICON_DESCRIPTION_HEIGHT = 24.0;
 var TOOL_HEIGHT = 110.0;
 var TOOL_HEIGHT_2 = TOOL_HEIGHT / 2.0;
 var TOOL_MARGIN = 10.0;
+var CANVAS_MARGIN = 2.0;
 
 @implementation ContributeView : CPView
 {
@@ -47,6 +48,12 @@ var TOOL_MARGIN = 10.0;
 
         _toolView = [[CPView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(bounds), TOOL_HEIGHT)];
         //[_toolView setBackgroundColor:[CPColor colorWithWhite:0.9 alpha:0.2]];
+        var borderLayer = [CALayer layer];
+        [borderLayer setDelegate:self];
+        [borderLayer setNeedsDisplay];
+        [borderLayer setZPosition:-1.0];
+        [_toolView setWantsLayer:YES];
+        [_toolView setLayer:borderLayer];
         [_toolView setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMaxYMargin];
         [self addSubview:_toolView];
 
@@ -88,9 +95,9 @@ var TOOL_MARGIN = 10.0;
         var path = [mainBundle pathForResource:@"original.jpg"];
         var image = [[CPImage alloc] initWithContentsOfFile:path];
 
-        var size = MIN(CGRectGetWidth(bounds), CGRectGetHeight(bounds) - TOOL_HEIGHT);
+        var size = MIN(CGRectGetWidth(bounds), CGRectGetHeight(bounds) - TOOL_HEIGHT - CANVAS_MARGIN);
         var x = (CGRectGetWidth(bounds) - size) / 2.0;
-        _canvasView = [[CanvasView alloc] initWithFrame:CGRectMake(x, TOOL_HEIGHT, size, size)];
+        _canvasView = [[CanvasView alloc] initWithFrame:CGRectMake(x, TOOL_HEIGHT + CANVAS_MARGIN, size, size)];
         [_canvasView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
         [_canvasView setImage:image];
         [self addSubview:_canvasView];
@@ -345,6 +352,20 @@ var TOOL_MARGIN = 10.0;
 
     [_redoButton setEnabled:[manager canRedo]];
     [_undoButton setEnabled:[manager canUndo]];
+}
+
+- (void)drawLayer:(CALayer)aLayer inContext:(CGContext)aContext
+{
+    var bounds = [aLayer bounds];
+    var fillColor = [CPColor colorWithWhite:0.3 alpha:0.2];
+    var borderColor = [CPColor grayColor];
+
+    CGContextSetFillColor(aContext, fillColor);
+    CGContextFillRoundedRectangleInRect(aContext, bounds, 20, YES, YES, YES, YES);
+
+    CGContextSetStrokeColor(aContext, borderColor);
+    CGContextSetLineWidth(aContext, 2);
+    CGContextStrokeRoundedRectangleInRect(aContext, bounds, 20, YES, YES, YES, YES);
 }
 
 @end
