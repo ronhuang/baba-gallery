@@ -112,7 +112,7 @@ class ArtworksAction(webapp.RequestHandler):
         artwork.thumbnail = db.Blob(images.resize(image, 200, 200))
         artwork.put()
 
-        self.redirect('/artwork/%d' % (artwork.key().id_or_name()))
+        self.response.set_status(201)
 
     def data_uri_scheme_decode(self, uri):
         """Decode from data URI scheme."""
