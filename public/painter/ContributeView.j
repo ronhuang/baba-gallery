@@ -229,7 +229,7 @@ var CANVAS_MARGIN = 2.0;
     var storage = [RLOfflineLocalStorage sharedOfflineLocalStorage],
         value = nil,
         count = nil,
-        key = nil,
+        key = nil;
 
     value = [storage getValueForKey:@"artworks.count"];
     count = value && parseInt(value) || 0;
