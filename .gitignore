@@ -2,3 +2,5 @@
 .DS_Store
 public/gallery/Frameworks
 public/painter/Frameworks
+public/gallery/Build
+public/painter/Build
