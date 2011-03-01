@@ -250,6 +250,8 @@ var VOTE_HEIGHT = 24.0;
     var point = [self convertPoint:[anEvent locationInWindow] fromView:nil];
     if ([_imageView hitTest:point])
         [self view];
+    else
+        [super mouseDown:anEvent];
 }
 
 @end
