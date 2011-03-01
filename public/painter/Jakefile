@@ -69,8 +69,15 @@ task ("run-release", ["release"], function()
 task ("deploy", ["release"], function()
 {
     FILE.mkdirs(FILE.join("Build", "Deployment", "BabaPainter"));
-    OS.system(["press", "-f", FILE.join("Build", "Release", "BabaPainter"), FILE.join("Build", "Deployment", "BabaPainter")]);
+    OS.system(["press", "-f", "--manifest", "-p", FILE.join("Build", "Release", "BabaPainter"), FILE.join("Build", "Deployment", "BabaPainter")]);
     printResults("Deployment")
+});
+
+task ("flatten", ["deploy"], function()
+{
+    FILE.mkdirs(FILE.join("Build", "Flatten", "BabaPainter"));
+    OS.system(["flatten", "-f", "--manifest", FILE.join("Build", "Deployment", "BabaPainter"), FILE.join("Build", "Flatten", "BabaPainter")]);
+    printResults("Flatten")
 });
 
 task ("desktop", ["release"], function()
