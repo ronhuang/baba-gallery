@@ -35,6 +35,8 @@ var CANVAS_MARGIN = 2.0;
     CPAlert _resultAlert;
 
     CPString _tool;
+
+    CPString _contentToSubmit;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -218,6 +220,64 @@ var CANVAS_MARGIN = 2.0;
     [_canvasView reset];
     [_undoButton setEnabled:NO];
     [_redoButton setEnabled:NO];
+    _contentToSubmit = nil;
+}
+
+- (void)submitToLocalStorage
+{
+    var storage = [RLOfflineLocalStorage sharedOfflineLocalStorage],
+        value = nil,
+        count = nil,
+        key = nil,
+
+    value = [storage getValueForKey:@"artworks.count"];
+    count = value && parseInt(value) || 0;
+
+    // Check if invalid
+    key = @"artworks[" + count + "].id";
+    if ([storage getValueForKey:key])
+    {
+        // The value should not exist!
+        // TODO: do something?
+    }
+
+    // Generate ID
+    var artwork = {
+        name: "",
+        email: "",
+        created_at: (new Date()).getTime(),
+        updated_at: (new Date()).getTime(),
+        view_count: 0,
+        vote_count: 0,
+        image: "",
+        thumbnail: "",
+        id: [CPString UUID],
+        image_url: _contentToSubmit,
+        thumbnail_url: _contentToSubmit,
+    };
+
+    for (var k in artwork)
+    {
+        key = @"artworks[" + count + "]." + k;
+        [storage setValue:@"" + artwork["key"] forKey:key];
+    }
+
+    // Update count.
+    count++;
+    key = @"artworks.count";
+    [storage removeValueForKey:key]; // necessary?
+    [storage setValue:@"" + count forKey:key];
+
+
+    if (_submittingAlert)
+    {
+        [_submittingAlert close];
+        _submittingAlert = nil;
+    }
+
+    _resultAlert = [CPAlert alertWithMessageText:@"Thank you for your contribution." defaultButton:@"OK" alternateButton:nil otherButton:nil informativeTextWithFormat:@"You can go to the Gallery to view your work."];
+    [_resultAlert setDelegate:self];
+    [_resultAlert runModal];
 }
 
 - (void)submit
@@ -276,17 +336,25 @@ var CANVAS_MARGIN = 2.0;
 
     // Submit to server.
     var data = [_canvasView mergedImageInDataUriScheme];
-
-    var content = [[CPString alloc] initWithFormat:@"image=%@", encodeURIComponent(data)];
-    var contentLength = [[CPString alloc] initWithFormat:@"%d", [content length]];
+    _contentToSubmit = [[CPString alloc] initWithFormat:@"image=%@", encodeURIComponent(data)];
 
     var req = [[CPURLRequest alloc] initWithURL:@"/artworks"];
     [req setHTTPMethod:@"POST"];
-    [req setHTTPBody:content];
-    //[req setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+    [req setHTTPBody:_contentToSubmit];
     [req setValue:"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 
     [CPURLConnection connectionWithRequest:req delegate:self];
+}
+
+- (void)connection:(CPURLConnection)connection didReceiveResponse:(CPHTTPURLResponse)response
+{
+    if (200 != [response statusCode])
+    {
+        [connection cancel];
+
+        // FIXME: Not neccessary correct to fallback to local storage!
+        [self submitToLocalStorage];
+    }
 }
 
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
@@ -304,14 +372,8 @@ var CANVAS_MARGIN = 2.0;
 
 - (void)connection:(CPURLConnection)connection didFailWithError:(CPString)error
 {
-    if (_submittingAlert)
-    {
-        [_submittingAlert close];
-        _submittingAlert = nil;
-    }
-
-    var alert = [CPAlert alertWithError:@""];
-    [alert runModal];
+    // FIXME: Not neccessary correct to fallback to local storage!
+    [self submitToLocalStorage];
 }
 
 - (void)handleResultAlert:(int)returnCode
