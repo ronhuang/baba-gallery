@@ -133,7 +133,7 @@ TOOL_PICKER = 2;
 
         CGContextAddLineToPoint(aContext, point.x, point.y);
 
-        wasBreak = pixel.break;
+        wasBreak = pixel.wasBreak;
         i++;
     }
     while (i < count);
@@ -195,7 +195,7 @@ TOOL_PICKER = 2;
 
     if (_attribute.tool == TOOL_PENCIL || _attribute.tool == TOOL_ERASER)
     {
-        [_pixels push:{point:point, attribute:_attribute, break:YES}];
+        [_pixels push:{point:point, attribute:_attribute, wasBreak:YES}];
         _currentIndex++;
         [_drawingLayer setNeedsDisplay];
 
