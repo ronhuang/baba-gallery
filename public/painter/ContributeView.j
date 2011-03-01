@@ -6,6 +6,7 @@
 @import "CanvasView.j"
 @import "CPView+Export.j"
 @import "SubmittingDialog.j"
+@import "RLOfflineLocalStorage.j"
 
 var SEP_WIDTH = 10.0;
 var ICON_WIDTH = 64.0;
