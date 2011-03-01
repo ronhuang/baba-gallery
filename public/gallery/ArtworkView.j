@@ -105,6 +105,7 @@ var VOTE_HEIGHT = 24.0;
 
     var votes = _artwork["vote_count"] + 1;
     _artwork["vote_count"] = votes;
+    _artwork["updated_at"] = (new Date()).getTime();
     [self saveArtworkToLocalStorage];
 
     [_voteTextView setStringValue:[self _formatVotes:votes]];
@@ -246,6 +247,7 @@ var VOTE_HEIGHT = 24.0;
 
     var views = _artwork["view_count"] + 1;
     _artwork["view_count"] = views;
+    _artwork["updated_at"] = (new Date()).getTime();
     [self saveArtworkToLocalStorage];
 
     var frame = CGRectInset([[self window] frame], 30.0, 30.0);
