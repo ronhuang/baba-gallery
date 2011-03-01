@@ -1,4 +1,5 @@
 @import <AppKit/CPButton.j>
+@import <AppKit/CGGradient.j>
 
 ThicknessSelectorThicknessDidChangeNotification = @"ThicknessSelectorThicknessDidChangeNotification";
 ThicknessSelectorDefaultThickness = 1;
