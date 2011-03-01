@@ -120,19 +120,23 @@ var VOTE_HEIGHT = 24.0;
         value = nil,
         count = nil,
         artwork_id = _artwork["id"],
-        index = nil,
-        value = nil,
+        index = 0,
         key = nil;
 
     value = [storage getValueForKey:@"artworks.count"];
     count = value && parseInt(value) || 0;
 
-    for (var i = 0; i < count; i++)
+    for (; index < count; index++)
     {
-        value = [storage getValueForKey:@"artworks[" + i + "].id"];
-        index = value && parseInt(value);
-        if (index && index == artwork_id)
+        if ([storage getValueForKey:@"artworks[" + index + "].id"] == artwork_id)
             break;
+    }
+
+    if (index >= count)
+    {
+        // Failed to save.
+        // TODO: inform user?
+        return;
     }
 
     for (var k in _artwork)
