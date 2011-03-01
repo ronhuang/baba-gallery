@@ -17,12 +17,12 @@ handlers:
   upload: public/index.html
 
 - url: /gallery
-  static_files: public/gallery/index.html
-  upload: public/gallery/index.html
+  static_files: public/gallery/frame.html
+  upload: public/gallery/frame.html
 
 - url: /painter
-  static_files: public/painter/index.html
-  upload: public/painter/index.html
+  static_files: public/painter/frame.html
+  upload: public/painter/frame.html
 
 - url: /(.*)
   static_files: public/\1
