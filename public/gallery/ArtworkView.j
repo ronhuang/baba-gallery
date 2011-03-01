@@ -117,11 +117,15 @@ var VOTE_HEIGHT = 24.0;
         return;
 
     var storage = [RLOfflineLocalStorage sharedOfflineLocalStorage],
-        count = value && parseInt(value) || 0,
+        value = nil,
+        count = nil,
         artwork_id = _artwork["id"],
         index = nil,
         value = nil,
         key = nil;
+
+    value = [storage getValueForKey:@"artworks.count"];
+    count = value && parseInt(value) || 0;
 
     for (var i = 0; i < count; i++)
     {
