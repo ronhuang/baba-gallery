@@ -241,7 +241,7 @@ var Canvas2Image = (function() {
 
 /******* Canvas2Image code ends here *******/
 
-@implementation CPView(Export) { }
+@implementation CPView(Export)
 
 - (DOMElement)exportToHTML
 {
