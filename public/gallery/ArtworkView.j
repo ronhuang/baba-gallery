@@ -3,6 +3,7 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPBox.j>
 @import "DetailDialog.j"
+@import "RLOfflineLocalStorage.j"
 
 var MARGIN_WIDTH = 15.0;
 var MARGIN_HEIGHT = 15.0;
@@ -97,6 +98,73 @@ var VOTE_HEIGHT = 24.0;
     _voteConn = [CPURLConnection connectionWithRequest:req delegate:self];
 }
 
+- (void)voteToLocalStorage
+{
+    if (!_artwork)
+        return;
+
+    var votes = _artwork["vote_count"] + 1;
+    _artwork["vote_count"] = votes;
+    [self saveArtworkToLocalStorage];
+
+    [_voteTextView setStringValue:[self _formatVotes:votes]];
+    [_voteButtonView setEnabled:YES];
+}
+
+- (void)saveArtworkToLocalStorage
+{
+    if (!_artwork)
+        return;
+
+    var storage = [RLOfflineLocalStorage sharedOfflineLocalStorage],
+        count = value && parseInt(value) || 0,
+        artwork_id = _artwork["id"],
+        index = nil,
+        value = nil,
+        key = nil;
+
+    for (var i = 0; i < count; i++)
+    {
+        value = [storage getValueForKey:@"artworks[" + i + "].id"];
+        index = value && parseInt(value);
+        if (index && index == artwork_id)
+            break;
+    }
+
+    for (var k in _artwork)
+    {
+        key = @"artworks[" + index + "]." + k;
+        [storage removeValueForKey:key];
+        [storage setValue:@"" + _artwork["key"] forKey:key];
+    }
+}
+
+- (void)connection:(CPURLConnection)connection didReceiveResponse:(CPHTTPURLResponse)response
+{
+    if (_voteConn == connection)
+    {
+        if (200 != [response statusCode])
+        {
+            [_voteConn cancel];
+            _voteConn = nil;
+
+            // FIXME: Not neccessary correct to fallback to local storage!
+            [self voteToLocalStorage];
+        }
+    }
+    else if (_viewConn == connection)
+    {
+        if (200 != [response statusCode])
+        {
+            [_viewConn cancel];
+            _viewConn = nil;
+
+            // FIXME: Not neccessary correct to fallback to local storage!
+            [self viewToLocalStorage];
+        }
+    }
+}
+
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
     if (_voteConn == connection)
@@ -128,12 +196,17 @@ var VOTE_HEIGHT = 24.0;
     // TODO: show failed message.
     if (_voteConn == connection)
     {
-        [_voteButtonView setEnabled:YES];
         _voteConn = nil;
+
+        // FIXME: Not neccessary correct to fallback to local storage!
+        [self voteToLocalStorage];
     }
     else if (_viewConn == connection)
     {
         _viewConn = nil;
+
+        // FIXME: Not neccessary correct to fallback to local storage!
+        [self viewToLocalStorage];
     }
 }
 
@@ -156,6 +229,20 @@ var VOTE_HEIGHT = 24.0;
     var req = [CPURLRequest requestWithURL:_artwork["url"]];
     [req setHTTPMethod:@"GET"];
     _viewConn = [CPURLConnection connectionWithRequest:req delegate:self];
+}
+
+- (void)viewToLocalStorage
+{
+    if (!_artwork)
+        return;
+
+    var views = _artwork["view_count"] + 1;
+    _artwork["view_count"] = views;
+    [self saveArtworkToLocalStorage];
+
+    var frame = CGRectInset([[self window] frame], 30.0, 30.0);
+    var dlg = [[DetailDialog alloc] initWithFrame:frame artwork:_artwork];
+    [dlg runModal];
 }
 
 - (void)mouseDown:(CPEvent)anEvent
