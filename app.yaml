@@ -29,6 +29,11 @@ handlers:
   upload: public/cache.manifest
   mime_type: text/cache-manifest
 
+- url: /baba/app.manifest
+  static_files: public/baba/app.manifest
+  upload: public/baba/app.manifest
+  mime_type: text/cache-manifest
+
 - url: /(.*)
   static_files: public/\1
   upload: public/(.*)
