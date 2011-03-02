@@ -144,7 +144,7 @@ var VOTE_HEIGHT = 24.0;
     {
         key = @"artworks[" + index + "]." + k;
         [storage removeValueForKey:key];
-        [storage setValue:@"" + _artwork["key"] forKey:key];
+        [storage setValue:@"" + _artwork[k] forKey:key];
     }
 }
 

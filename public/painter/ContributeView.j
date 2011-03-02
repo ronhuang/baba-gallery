@@ -260,7 +260,7 @@ var CANVAS_MARGIN = 2.0;
     for (var k in artwork)
     {
         key = @"artworks[" + count + "]." + k;
-        [storage setValue:@"" + artwork["key"] forKey:key];
+        [storage setValue:@"" + artwork[k] forKey:key];
     }
 
     // Update count.
