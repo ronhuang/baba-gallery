@@ -37,7 +37,7 @@ var CANVAS_MARGIN = 2.0;
 
     CPString _tool;
 
-    CPString _contentToSubmit;
+    CPString _dataToSubmit;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -221,7 +221,7 @@ var CANVAS_MARGIN = 2.0;
     [_canvasView reset];
     [_undoButton setEnabled:NO];
     [_redoButton setEnabled:NO];
-    _contentToSubmit = nil;
+    _dataToSubmit = nil;
 }
 
 - (void)submitToLocalStorage
@@ -253,8 +253,8 @@ var CANVAS_MARGIN = 2.0;
         image: "",
         thumbnail: "",
         id: [CPString UUID],
-        image_url: _contentToSubmit,
-        thumbnail_url: _contentToSubmit,
+        image_url: _dataToSubmit,
+        thumbnail_url: _dataToSubmit,
     };
 
     for (var k in artwork)
@@ -336,12 +336,12 @@ var CANVAS_MARGIN = 2.0;
     [_submittingAlert runModal];
 
     // Submit to server.
-    var data = [_canvasView mergedImageInDataUriScheme];
-    _contentToSubmit = [[CPString alloc] initWithFormat:@"image=%@", encodeURIComponent(data)];
+    _dataToSubmit = [_canvasView mergedImageInDataUriScheme];
+    var body = [[CPString alloc] initWithFormat:@"image=%@", encodeURIComponent(_dataToSubmit)];
 
     var req = [[CPURLRequest alloc] initWithURL:@"/artworks"];
     [req setHTTPMethod:@"POST"];
-    [req setHTTPBody:_contentToSubmit];
+    [req setHTTPBody:body];
     [req setValue:"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 
     [CPURLConnection connectionWithRequest:req delegate:self];
