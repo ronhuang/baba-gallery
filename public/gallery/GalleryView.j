@@ -127,7 +127,7 @@ var SORT_FUNCTIONS = [
             vote_count: vote_count,
             image: [storage getValueForKey:@"artworks[" + i + "].image"] || "",
             thumbnail: [storage getValueForKey:@"artworks[" + i + "].thumbnail"] || "",
-            id: [storage getValueForKey:@"artworks[" + i + "].thumbnail"] || "",
+            id: [storage getValueForKey:@"artworks[" + i + "].id"] || "",
             image_url: [storage getValueForKey:@"artworks[" + i + "].image_url"] || "",
             thumbnail_url: [storage getValueForKey:@"artworks[" + i + "].thumbnail_url"] || "",
         };
