@@ -21,7 +21,7 @@ task ("release", function()
 
     var src = FILE.join("frontend", "Build", "Flatten", "baba");
     var dst = FILE.join("public", "baba");
-    if (FILE.linkExists(dst))
+    if (FILE.exists(dst))
         FILE.remove(dst);
     FILE.symlink(src, dst);
 });
@@ -30,7 +30,7 @@ task ("debug", function()
 {
     var src = FILE.join("frontend");
     var dst = FILE.join("public", "baba");
-    if (FILE.linkExists(dst))
+    if (FILE.exists(dst))
         FILE.remove(dst);
     FILE.symlink(src, dst);
 });
