@@ -1,0 +1,23 @@
+CACHE MANIFEST
+
+CACHE:
+/robots.txt
+/favicon.ico
+
+/js/site.js
+/js/jquery.min.js
+/js/html5.js
+
+/
+/painter
+/gallery
+/baba/index.html
+
+/css/screen.css
+
+/img/gradshine.png
+/img/tile-blue.png
+/img/shine.png
+
+NETWORK:
+*

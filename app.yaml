@@ -24,6 +24,11 @@ handlers:
   static_files: public/painter.html
   upload: public/painter.html
 
+- url: /cache.manifest
+  static_files: public/cache.manifest
+  upload: public/cache.manifest
+  mime_type: text/cache-manifest
+
 - url: /(.*)
   static_files: public/\1
   upload: public/(.*)

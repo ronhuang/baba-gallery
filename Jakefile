@@ -17,7 +17,7 @@ task ("default", ["debug"]);
 
 task ("release", function()
 {
-    JAKE.subjake(FILE.join("frontend", "baba"), "flatten", ENV);
+    JAKE.subjake(FILE.join("frontend"), "flatten", ENV);
 
     var src = FILE.join("frontend", "Build", "Flatten", "baba");
     var dst = FILE.join("public", "baba");
