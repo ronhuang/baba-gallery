@@ -1,6 +1,5 @@
 *.pyc
 .DS_Store
-frontend/gallery/Frameworks
-frontend/painter/Frameworks
-frontend/gallery/Build
-frontend/painter/Build
+frontend/baba/Frameworks
+frontend/baba/Build
+backend/public

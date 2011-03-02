@@ -13,16 +13,16 @@ handlers:
 
 # Static
 - url: /
-  static_files: public/index.html
-  upload: public/index.html
+  static_files: public/home.html
+  upload: public/home.html
 
 - url: /gallery
-  static_files: public/gallery/frame.html
-  upload: public/gallery/frame.html
+  static_files: public/gallery.html
+  upload: public/gallery.html
 
 - url: /painter
-  static_files: public/painter/frame.html
-  upload: public/painter/frame.html
+  static_files: public/painter.html
+  upload: public/painter.html
 
 - url: /(.*)
   static_files: public/\1
