@@ -15,17 +15,17 @@ var ENV = require("system").env,
     configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug",
     OS = require("os");
 
-app ("BabaPainter", function(task)
+app ("baba", function(task)
 {
-    task.setBuildIntermediatesPath(FILE.join("Build", "BabaPainter.build", configuration));
+    task.setBuildIntermediatesPath(FILE.join("Build", "baba.build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("BabaPainter");
-    task.setIdentifier("org.ronhuang.BabaPainter");
-    task.setVersion("1.0");
+    task.setProductName("Baba Painter");
+    task.setIdentifier("org.ronhuang.baba");
+    task.setVersion("2.0");
     task.setAuthor("Ron Huang");
     task.setEmail("ronhuang @nospam@ gmail.com");
-    task.setSummary("BabaPainter");
+    task.setSummary("Baba Painter is a serious interactive art installation serving two purposes: first, as a training and experimental restoration installation for restoration experts to practice and hone their skills, and secondly, for the creation of fun, social networking activities.");
     task.setSources((new FileList("**/*.j")).exclude(FILE.join("Build", "**")));
     task.setResources(new FileList("Resources/**"));
     task.setIndexFilePath("index.html");
@@ -37,7 +37,7 @@ app ("BabaPainter", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("default", ["BabaPainter"], function()
+task ("default", ["baba"], function()
 {
     printResults(configuration);
 });
@@ -58,43 +58,43 @@ task ("release", function()
 
 task ("run", ["debug"], function()
 {
-    OS.system(["open", FILE.join("Build", "Debug", "BabaPainter", "index.html")]);
+    OS.system(["open", FILE.join("Build", "Debug", "baba", "index.html")]);
 });
 
 task ("run-release", ["release"], function()
 {
-    OS.system(["open", FILE.join("Build", "Release", "BabaPainter", "index.html")]);
+    OS.system(["open", FILE.join("Build", "Release", "baba", "index.html")]);
 });
 
 task ("deploy", ["release"], function()
 {
-    FILE.mkdirs(FILE.join("Build", "Deployment", "BabaPainter"));
-    OS.system(["press", "-f", "--manifest", "-p", FILE.join("Build", "Release", "BabaPainter"), FILE.join("Build", "Deployment", "BabaPainter")]);
+    FILE.mkdirs(FILE.join("Build", "Deployment", "baba"));
+    OS.system(["press", "-f", "--manifest", "-p", FILE.join("Build", "Release", "baba"), FILE.join("Build", "Deployment", "baba")]);
     printResults("Deployment")
 });
 
 task ("flatten", ["deploy"], function()
 {
-    FILE.mkdirs(FILE.join("Build", "Flatten", "BabaPainter"));
-    OS.system(["flatten", "-f", "--manifest", FILE.join("Build", "Deployment", "BabaPainter"), FILE.join("Build", "Flatten", "BabaPainter")]);
+    FILE.mkdirs(FILE.join("Build", "Flatten", "baba"));
+    OS.system(["flatten", "-f", "--manifest", FILE.join("Build", "Deployment", "baba"), FILE.join("Build", "Flatten", "baba")]);
     printResults("Flatten")
 });
 
 task ("desktop", ["release"], function()
 {
-    FILE.mkdirs(FILE.join("Build", "Desktop", "BabaPainter"));
-    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", "BabaPainter"), FILE.join("Build", "Desktop", "BabaPainter", "BabaPainter.app"));
+    FILE.mkdirs(FILE.join("Build", "Desktop", "baba"));
+    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", "baba"), FILE.join("Build", "Desktop", "baba", "BabaPainter.app"));
     printResults("Desktop")
 });
 
 task ("run-desktop", ["desktop"], function()
 {
-    OS.system([FILE.join("Build", "Desktop", "BabaPainter", "BabaPainter.app", "Contents", "MacOS", "NativeHost"), "-i"]);
+    OS.system([FILE.join("Build", "Desktop", "baba", "BabaPainter.app", "Contents", "MacOS", "NativeHost"), "-i"]);
 });
 
 function printResults(configuration)
 {
     print("----------------------------");
-    print(configuration+" app built at path: "+FILE.join("Build", configuration, "BabaPainter"));
+    print(configuration+" app built at path: "+FILE.join("Build", configuration, "baba"));
     print("----------------------------");
 }
