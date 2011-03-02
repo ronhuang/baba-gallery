@@ -24,7 +24,7 @@ app ("BabaPainter", function(task)
     task.setIdentifier("org.ronhuang.BabaPainter");
     task.setVersion("1.0");
     task.setAuthor("Ron Huang");
-    task.setEmail("feedback @nospam@ yourcompany.com");
+    task.setEmail("ronhuang @nospam@ gmail.com");
     task.setSummary("BabaPainter");
     task.setSources((new FileList("**/*.j")).exclude(FILE.join("Build", "**")));
     task.setResources(new FileList("Resources/**"));
