@@ -20,7 +20,7 @@ app ("baba", function(task)
     task.setBuildIntermediatesPath(FILE.join("Build", "baba.build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("Baba Painter");
+    task.setProductName("baba");
     task.setIdentifier("org.ronhuang.baba");
     task.setVersion("2.0");
     task.setAuthor("Ron Huang");
