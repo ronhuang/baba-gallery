@@ -1,5 +1,5 @@
 *.pyc
 .DS_Store
-frontend/baba/Frameworks
-frontend/baba/Build
-backend/public
+frontend/Frameworks
+frontend/Build
+backend/public/baba
