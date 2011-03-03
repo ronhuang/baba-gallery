@@ -1,5 +1,5 @@
 application: baba-gallery
-version: 2
+version: 3
 runtime: python
 api_version: 1
 
@@ -37,3 +37,18 @@ handlers:
 - url: /(.*)
   static_files: public/\1
   upload: public/(.*)
+
+# Skip frontend code
+skip_files:
+- ^(.*/)?.*/frontend/.*
+- ^(.*/)?.*/Debug/.*
+- ^(.*/)?app\.yaml
+- ^(.*/)?app\.yml
+- ^(.*/)?index\.yaml
+- ^(.*/)?index\.yml
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(.*/)?.*\.bak$
