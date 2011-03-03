@@ -100,7 +100,7 @@ var Canvas2Image = (function() {
         mergedCanvas.getContext("2d").drawImage(cc, 0, 0);
     }
 
-    var img = Canvas2Image.saveAsJPEG(mergedCanvas, true)
+    var img = Canvas2Image.saveAsJPEG(mergedCanvas, true);
     return img.src;
 }
 
